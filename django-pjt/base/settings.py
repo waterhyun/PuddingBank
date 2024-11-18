@@ -11,9 +11,23 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import environ
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env(
+    # 기본값 설정
+    DEBUG=(bool, False)
+)
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# API 키 설정
+FSS_API_KEY = env('FSS_API_KEY')
+# KAKAO_MAP_API_KEY = env('KAKAO_MAP_API_KEY')  # 카카오맵 API 키
+# EXCHANGE_API_KEY = env('EXCHANGE_API_KEY')     # 환율 API 키
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,17 +45,24 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'finance_services',
+    # 커스텀 앱
     'accounts',
+    'products',
+    'exchanges',
+    'locations',
+    # REST Framework 관련
     'rest_framework',
-    # 'rest_framework.authtoken',
-    # 'dj_rest_auth',
-    # 'corsheaders',
-    # 'django.contrib.sites',
-    # 'allauth',
-    # 'allauth.account',
-    # 'allauth.socialaccount',
-    # 'dj_rest_auth.registration',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    # CORS 관련
+    'corsheaders',
+    # 소셜 인증 관련
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
+    # 기본앱
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,31 +71,43 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-# SITE_ID = 1
+# Django의 sites 프레임워크에서 사용되는 현재 사이트의 ID를 지정
+SITE_ID = 1
 
-# REST_FRAMEWORK = {
-#     # Authentication
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.TokenAuthentication',
-#     ],
-#     # permission
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.AllowAny',
-#     ],
-# }
+REST_FRAMEWORK = {
+    # Authentication
+    # API 요청의 인증 방식을 정의
+    # TokenAuthentication: 토큰 기반 인증 방식 사용
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    # permission
+    # API 엔드포인트의 기본 접근 권한 설정
+    # AllowAny: 모든 사용자(인증 여부 관계없이)가 API에 접근 가능
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+}
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'allauth.account.middleware.AccountMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
+
+# 특정 출처(도메인)의 웹 애플리케이션에서 API 접근을 허용
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:5173',
+    'http://localhost:5173',
+]
+
 
 ROOT_URLCONF = 'base.urls'
 
@@ -130,9 +163,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -148,3 +181,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Django의 기본 사용자 모델을 커스텀 사용자 모델로 대체
+# 'accounts' 앱의 'User' 모델을 프로젝트의 사용자 모델로 지정
+AUTH_USER_MODEL = 'accounts.User'
