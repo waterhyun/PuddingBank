@@ -1,9 +1,15 @@
+<template>
+  <div>
+    <h1>Pudding Bank</h1>
+    <!-- <ArticleList /> -->
+  </div>
+</template>
+
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import { RouterLink } from 'vue-router';
+// import ArticleList from '../components/ArticleList.vue';
 </script>
 
-<template>
-  <main>
-    <TheWelcome />
-  </main>
-</template>
+<style lang="scss" scoped>
+
+</style>
