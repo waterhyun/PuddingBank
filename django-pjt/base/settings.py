@@ -26,7 +26,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # API 키 설정
 FSS_API_KEY = env('FSS_API_KEY')
 # KAKAO_MAP_API_KEY = env('KAKAO_MAP_API_KEY')  # 카카오맵 API 키
-# EXCHANGE_API_KEY = env('EXCHANGE_API_KEY')     # 환율 API 키
+EXCHANGE_API_KEY = env('EXCHANGE_API_KEY')     # 환율 API 키
 
 
 

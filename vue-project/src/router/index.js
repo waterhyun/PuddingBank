@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import ArticleView from '../views/ArticleView.vue'
 import ArticleCreateView from '@/views/ArticleCreateView.vue'
 import ArticleDetailView from '@/views/ArticleDetailView.vue'
+import ExchangesView from '@/views/ExchangesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path:'/articledetail/:id',  //:id
       name:'articledetail',
       component: ArticleDetailView
+    },
+    { //환율변환 페이지
+      path:'/exchanges',
+      name: 'exchanges',
+      component: ExchangesView,
     }
 
     // {
