@@ -1,15 +1,9 @@
 from rest_framework import serializers
-from .models import Article
+from .models import Exchange
 
 
-class ArticleListSerializer(serializers.ModelSerializer):
-    
+class ExchangeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Article
-        fields = ('title', 'content')
-
-class ArticleSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Article
-        fields = '__all__'
+        model = Exchange
+        fields = '__all__'  # 모든 필드를 포함
+        # ['cur_unit', 'cur_nm', 'deal_bas_r']
