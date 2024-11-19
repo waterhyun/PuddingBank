@@ -20,7 +20,6 @@ from django.urls import path, include
 urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
-    
     # API 버전 1
     path('api/v1/', include([
         # 게시글 관련
@@ -29,8 +28,8 @@ urlpatterns = [
         path('products/', include('products.urls')),
         # 위치 서비스 관련
         path('locations/', include('locations.urls')),
-        # # 환율 정보 관련
-        # path('exchanges/', include('exchanges.urls')),
+        # 환율 정보 관련
+        path('exchanges/', include('exchanges.urls')),
     ])),
     
     # 계정 관련
