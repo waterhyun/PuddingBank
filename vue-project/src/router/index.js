@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import ArticleView from '../views/ArticleView.vue'
 import ArticleCreateView from '@/views/ArticleCreateView.vue'
 import ArticleDetailView from '@/views/ArticleDetailView.vue'
+import BankSearchView from '@/views/locations/BankSearchView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,7 +27,13 @@ const router = createRouter({
       path:'/articledetail/:id',  //:id
       name:'articledetail',
       component: ArticleDetailView
+    },
+    {
+      path: '/banks',
+      name: 'BankSearch',
+      component: BankSearchView
     }
+
 
     // {
     //   path: '/about',

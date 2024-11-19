@@ -18,10 +18,21 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
-    path('api/v1/', include('articles.urls')),
-    # path('accounts/', include('dj_rest_auth.urls')),
-    # path('accounts/signup/', include('dj_rest_auth.registration.urls')),
+    
+    # API 버전 1
+    path('api/v1/', include([
+        # 게시글 관련
+        path('articles/', include('articles.urls')),
+        # 금융 상품 관련
+        path('products/', include('products.urls')),
+        # 위치 서비스 관련
+        path('locations/', include('locations.urls')),
+        # # 환율 정보 관련
+        # path('exchanges/', include('exchanges.urls')),
+    ])),
+    
+    # 계정 관련
     path('api/accounts/', include('accounts.urls')),
-    path('api/v1/products/', include('products.urls')),
 ]
