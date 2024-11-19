@@ -51,6 +51,7 @@ CORS_ALLOWED_ORIGINS = [
 INSTALLED_APPS = [
     # 커스텀 앱
     'accounts',
+    'articles',
     'products',
     'exchanges',
     'locations',

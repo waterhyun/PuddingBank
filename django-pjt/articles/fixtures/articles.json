@@ -3,150 +3,120 @@
     "model": "articles.article",
     "pk": 1,
     "fields": {
-        "title": "Local sort avoid under cause.",
-        "content": "Oil structure blue discuss. Human realize industry involve. Character against short majority hold probably.\nAnd rest little summer simply.",
-        "created_at": "1987-03-18T17:54:30Z",
-        "updated_at": "1999-11-25T18:22:36Z"
+        "user": 3,
+        "title": "TEST 1 TITLE",
+        "content": "Affect media sister offer itself.\nAdd teacher debate exactly. Nature difficult whether stand short glass son raise. Visit environment anything approach develop.",
+        "created_at": "2022-04-21T12:32:10.905Z",
+        "updated_at": "2022-04-21T12:32:10.905Z",
+        "like_users": []
     }
 },
 {
     "model": "articles.article",
     "pk": 2,
     "fields": {
-        "title": "Speak war above public manager.",
-        "content": "Thing wife respond study beautiful similar. Else road program many station two knowledge. Fast play development agreement.\nClaim better pick go. Produce leg believe nothing.",
-        "created_at": "2012-05-24T21:11:39Z",
-        "updated_at": "2008-02-29T17:22:56Z"
+        "user": 5,
+        "title": "TEST 2 TITLE",
+        "content": "Idea hit wonder. Mr space follow.\nIndeed half skin sense possible together impact. Live bed break reflect pressure.",
+        "created_at": "2022-04-21T12:32:10.977Z",
+        "updated_at": "2022-04-21T12:32:10.977Z",
+        "like_users": []
     }
 },
 {
     "model": "articles.article",
     "pk": 3,
     "fields": {
-        "title": "Mouth city role.",
-        "content": "Land edge writer commercial show nice.",
-        "created_at": "2022-03-03T23:43:45Z",
-        "updated_at": "1972-01-19T05:10:17Z"
+        "user": 4,
+        "title": "TEST 3 TITLE",
+        "content": "Conference represent light cover hear eight I. Subject six style stay rate ability marriage.",
+        "created_at": "2022-04-21T12:32:11.050Z",
+        "updated_at": "2022-04-21T12:32:11.050Z",
+        "like_users": []
     }
 },
 {
     "model": "articles.article",
     "pk": 4,
     "fields": {
-        "title": "Program smile one.",
-        "content": "Sign name girl minute pretty include current. With keep list represent.\nFish tax relate site various ground into. Live of discussion program natural.",
-        "created_at": "1974-01-05T03:37:50Z",
-        "updated_at": "1980-10-14T11:38:19Z"
+        "user": 2,
+        "title": "TEST 4 TITLE",
+        "content": "Able live form. Young understand family listen though.\nPresent among born identify fast me up. Money at center here reduce media.",
+        "created_at": "2022-04-21T12:32:11.122Z",
+        "updated_at": "2022-04-21T12:32:11.122Z",
+        "like_users": []
     }
 },
 {
     "model": "articles.article",
     "pk": 5,
     "fields": {
-        "title": "Material training station thousand parent tend teach.",
-        "content": "Consumer stock law audience itself. Different mind but throw such. After market high before society member skin.\nFire relate push think agree unit style.",
-        "created_at": "1998-02-08T22:07:00Z",
-        "updated_at": "1992-05-10T05:57:36Z"
+        "user": 1,
+        "title": "TEST 5 TITLE",
+        "content": "Health news that medical job late program. Staff recently product second cultural. Peace put if mind seven key own.\nWife way listen store tree herself company.",
+        "created_at": "2022-04-21T12:32:11.195Z",
+        "updated_at": "2022-04-21T12:32:11.195Z",
+        "like_users": []
     }
 },
 {
     "model": "articles.article",
     "pk": 6,
     "fields": {
-        "title": "West act have.",
-        "content": "Sit debate hope need computer.\nCamera page those get mission. Woman worker north tonight trial. Region card organization respond always.",
-        "created_at": "2016-10-06T20:25:03Z",
-        "updated_at": "2013-02-04T00:27:11Z"
+        "user": 2,
+        "title": "TEST 6 TITLE",
+        "content": "Read represent source want art century quite. Say buy owner research.\nOffer goal religious. Table audience chance exactly cultural. Under budget individual open. Run sister high huge view.",
+        "created_at": "2022-04-21T12:32:11.267Z",
+        "updated_at": "2022-04-21T12:32:11.267Z",
+        "like_users": []
     }
 },
 {
     "model": "articles.article",
     "pk": 7,
     "fields": {
-        "title": "Well everything score with discuss.",
-        "content": "Discuss tree past own nor crime. Last follow tell news.\nImagine fact save short however benefit whatever form. Blood myself research first nation. Perform red man anyone.",
-        "created_at": "2008-05-05T21:38:38Z",
-        "updated_at": "2018-07-14T07:33:03Z"
+        "user": 5,
+        "title": "TEST 7 TITLE",
+        "content": "Newspaper position establish establish later team drop enter. Fly wish benefit middle Congress interest final entire.",
+        "created_at": "2022-04-21T12:32:11.338Z",
+        "updated_at": "2022-04-21T12:32:11.338Z",
+        "like_users": []
     }
 },
 {
     "model": "articles.article",
     "pk": 8,
     "fields": {
-        "title": "Director education piece huge.",
-        "content": "Reflect bad medical seat. Growth my performance team how keep. Yes serious nearly accept fine impact system.",
-        "created_at": "2014-02-20T03:47:44Z",
-        "updated_at": "1971-04-17T09:15:31Z"
+        "user": 1,
+        "title": "TEST 8 TITLE",
+        "content": "Them pay control on sort. Whether tree sister door prove unit. Success business treat beat find place.\nMaybe number notice. Defense important appear field far.",
+        "created_at": "2022-04-21T12:32:11.410Z",
+        "updated_at": "2022-04-21T12:32:11.410Z",
+        "like_users": []
     }
 },
 {
     "model": "articles.article",
     "pk": 9,
     "fields": {
-        "title": "Rise indicate community.",
-        "content": "Street series conference must try through night. Politics understand politics put national. Agent cut executive tree green much kind.",
-        "created_at": "1989-02-01T11:42:29Z",
-        "updated_at": "1990-10-29T08:14:45Z"
+        "user": 1,
+        "title": "TEST 9 TITLE",
+        "content": "Kind sometimes open right section will heart. Tend four its big guy threat.\nLaugh write five politics. Seem letter tax anything north face wait.",
+        "created_at": "2022-04-21T12:32:11.482Z",
+        "updated_at": "2022-04-21T12:32:11.482Z",
+        "like_users": []
     }
 },
 {
     "model": "articles.article",
     "pk": 10,
     "fields": {
-        "title": "She billion peace performance those no same.",
-        "content": "Activity clearly look movie analysis. Eye town ago else. Share out responsibility pattern dark future.\nCan eye sure that bring. Part road second.",
-        "created_at": "1972-10-03T22:17:53Z",
-        "updated_at": "2010-12-06T08:08:21Z"
-    }
-},
-{
-    "model": "articles.article",
-    "pk": 11,
-    "fields": {
-        "title": "Case stock state.",
-        "content": "Specific scene knowledge officer federal myself hand. Down red dog Mrs. Beautiful professor soon tough also turn amount catch. Mouth interest prevent.",
-        "created_at": "1976-08-04T12:29:40Z",
-        "updated_at": "2013-01-05T13:26:07Z"
-    }
-},
-{
-    "model": "articles.article",
-    "pk": 12,
-    "fields": {
-        "title": "Part allow thing seven instead management agreement.",
-        "content": "World through throughout.\nCultural fear give water sign. Know account base sing.",
-        "created_at": "2000-09-18T17:09:42Z",
-        "updated_at": "2001-09-17T16:22:05Z"
-    }
-},
-{
-    "model": "articles.article",
-    "pk": 13,
-    "fields": {
-        "title": "Mention according them.",
-        "content": "Skin often buy officer close vote statement. Read book finally capital morning full investment.\nSure energy same. Rise there three all avoid couple weight. Water should effort month.",
-        "created_at": "1973-03-16T14:40:27Z",
-        "updated_at": "1997-11-18T16:48:06Z"
-    }
-},
-{
-    "model": "articles.article",
-    "pk": 14,
-    "fields": {
-        "title": "One throughout grow time he last.",
-        "content": "Minute price prove artist. You economy popular of social.\nFact assume course.\nHand program just remember everyone great range meeting. Which figure think somebody else nor happy.",
-        "created_at": "1984-12-12T17:25:47Z",
-        "updated_at": "2004-03-23T05:09:54Z"
-    }
-},
-{
-    "model": "articles.article",
-    "pk": 15,
-    "fields": {
-        "title": "Despite physical right year one.",
-        "content": "Whose class reason blue song. List turn inside type. Family item two goal.",
-        "created_at": "2022-02-17T00:15:27Z",
-        "updated_at": "2009-05-16T22:45:28Z"
+        "user": 5,
+        "title": "TEST 10 TITLE",
+        "content": "Right social college dinner education short practice news. Pass finish method party.",
+        "created_at": "2022-04-21T12:32:11.553Z",
+        "updated_at": "2022-04-21T12:32:11.553Z",
+        "like_users": []
     }
 }
 ]
