@@ -1,35 +1,14 @@
-<!-- <template>
-  <div>
-    <h2>{{ idx+1 }}번 게시글</h2>
-    <p>제목 : {{ article.title }}</p>
-    <p>내용 : {{ article.content }}</p>
-    <RouterLink :to="{name:'detail'}">상세보기</RouterLink>
-    <hr>
-  </div>
-</template>
-
-<script setup>
-import { RouterLink } from 'vue-router';
-defineProps({
-  article:Object,
-  idx:Number,
-})
-</script>
-
-<style scoped>
-
-</style> -->
-
 <template>
-  <div class="article-card">
-    <!-- <h2>게시글</h2> -->
+  <RouterLink
+    :to="{ 
+      name: 'articledetail', 
+      params: { id: article.id }
+    }"
+    class="article-card"
+  >
     <h2 class="article-title">{{ article.id }}번 게시글</h2>
     <p class="article-info"><strong>제목:</strong> {{ article.title }}</p>
-    <!-- <p class="article-content"><strong>내용:</strong> {{ article.content }}</p> -->
-    <!-- <RouterLink :to="{ name: 'articledetail', params:{id:article.id}}" class="detail-link">
-      상세보기
-    </RouterLink> -->
-  </div>
+  </RouterLink>
 </template>
 
 <script setup>
@@ -38,50 +17,39 @@ defineProps({
   article: Object,
 });
 
+
+
 // console.log(article)
 
 </script>
 
 <style scoped>
 .article-card {
-  background-color: #f9f9f9;
+  display: block; /* 박스 전체를 클릭 가능 영역으로 설정 */
+  padding: 20px;
+  margin-bottom: 10px;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease-in-out;
+  border-radius: 5px;
+  text-decoration: none; /* 기본 링크 스타일 제거 */
+  color: inherit; /* 부모 요소의 색상 상속 */
+  cursor: pointer; /* 마우스 포인터 변경 */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .article-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px); /* hover 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* hover 시 그림자 */
+  background-color: #f9f9f9; /* hover 시 배경색 변경 */
 }
 
 .article-title {
   font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 8px;
+  font-weight: bold;
+  margin: 0 0 10px;
 }
 
-.article-info,
-.article-content {
+.article-info {
   font-size: 1rem;
-  color: #555;
-  margin-bottom: 8px;
-}
-
-.detail-link {
-  display: inline-block;
-  padding: 8px 12px;
-  background-color: #007bff;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.detail-link:hover {
-  background-color: #0056b3;
+  margin: 0;
 }
 </style>

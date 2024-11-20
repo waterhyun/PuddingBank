@@ -27,7 +27,8 @@ const router = createRouter({
     { //단일 게시글 상세 페이지
       path:'/articledetail/:id',  //:id
       name:'articledetail',
-      component: ArticleDetailView
+      component: ArticleDetailView,
+      props: true
     },
     {
       path: '/banks',
