@@ -30,8 +30,11 @@ urlpatterns = [
         path('locations/', include('locations.urls')),
         # 환율 정보 관련
         path('exchanges/', include('exchanges.urls')),
+        # dj-rest-auth URLs
+        path('accounts/', include([
+            path('', include('dj_rest_auth.urls')),
+            path('signup/', include('dj_rest_auth.registration.urls')),
+            path('', include('accounts.urls')),
+        ])),
     ])),
-    
-    # 계정 관련
-    path('api/accounts/', include('accounts.urls')),
 ]
