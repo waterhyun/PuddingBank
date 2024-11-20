@@ -39,7 +39,7 @@ export const useArticleStore = defineStore('article', () => {
   const getArticle = function(article_id) {
     axios({
       method: 'get',
-      url: `http://127.0.0.1:8000/api/v1/articles/detail/${article_id}/`,
+      url: `http://127.0.0.1:8000/api/v1/articles/${article_id}/`,
     }).then(res => {
       article.value = res.data;
       comments.value = res.data.comments;
@@ -50,12 +50,12 @@ export const useArticleStore = defineStore('article', () => {
   const updateArticle = function(article_id, updatedData) {
     axios({
       method: 'put',
-      url: `http://127.0.0.1:8000/api/v1/articles/detail/${article_id}/`,
+      url: `http://127.0.0.1:8000/api/v1/articles/${article_id}/`,
       data: updatedData, // 수정된 데이터
     })
     .then(res => {
       article.value = res.data; // 수정된 게시글 데이터 저장
-      console.log('Article updated successfully:', res.data);
+      // console.log('Article updated successfully:', res.data);
     })
     .catch(error => {
       console.error('Error updating article:', error);
@@ -66,12 +66,13 @@ export const useArticleStore = defineStore('article', () => {
   const deleteArticle = function(article_id) {
     axios({
       method: 'delete',
-      url: `http://127.0.0.1:8000/api/v1/articles/detail/${article_id}/`,
+      url: `http://127.0.0.1:8000/api/v1/articles/${article_id}/`,
     })
     .then(() => {
       article.value = null; // 삭제 후 게시글 상태 초기화
       comments.value = []; // 댓글 상태 초기화
-      console.log(`Article with ID ${article_id} deleted successfully.`);
+      // console.log(`Article with ID ${article_id} deleted successfully.`);
+      router.push({name:'articles'})
     })
     .catch(error => {
       console.error('Error deleting article:', error);
@@ -83,7 +84,7 @@ export const useArticleStore = defineStore('article', () => {
   const updateComment = function(comment_id, updatedData) {
     axios({
       method: 'put',
-      url: `http://127.0.0.1:8000/api/v1/comments/${comment_id}/`,
+      url: `http://127.0.0.1:8000/api/v1/articles/comments/${comment_id}/`,
       data: updatedData, // 수정된 데이터
     })
     .then(res => {
@@ -91,7 +92,7 @@ export const useArticleStore = defineStore('article', () => {
       comments.value = comments.value.map(comment =>
         comment.id === updatedComment.id ? updatedComment : comment
       );
-      console.log('Comment updated successfully:', updatedComment);
+      // console.log('Comment updated successfully:', updatedComment);
     })
     .catch(error => {
       console.error('Error updating comment:', error);
@@ -102,11 +103,11 @@ export const useArticleStore = defineStore('article', () => {
   const deleteComment = function(comment_id) {
     axios({
       method: 'delete',
-      url: `http://127.0.0.1:8000/api/v1/comments/${comment_id}/`,
+      url: `http://127.0.0.1:8000/api/v1/articles/comments/${comment_id}/`,
     })
     .then(() => {
       comments.value = comments.value.filter(comment => comment.id !== comment_id);
-      console.log(`Comment with ID ${comment_id} deleted successfully.`);
+      // console.log(`Comment with ID ${comment_id} deleted successfully.`);
     })
     .catch(error => {
       console.error('Error deleting comment:', error);

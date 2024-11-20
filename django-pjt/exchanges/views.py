@@ -46,6 +46,7 @@ def exchange(request):
             return date.strftime('%Y%m%d')
         today = datetime.now()
         formatted_date = get_adjusted_date(today)
+        dateform_date = datetime.strptime(formatted_date, "%Y%m%d").strftime("%Y-%m-%d")
 
         # API 호출 정보
         url = 'https://www.koreaexim.go.kr/site/program/financial/exchangeJSON'
@@ -75,7 +76,7 @@ def exchange(request):
                 item['bkpr'] = parse_float(item.get('bkpr'))
                 item['kftc_bkpr'] = parse_float(item.get('kftc_bkpr'))
                 item['kftc_deal_bas_r'] = parse_float(item.get('kftc_deal_bas_r'))
-                item['update_date'] = formatted_date
+                item['update_date'] = dateform_date
         # 데이터 저장
 
             # API 데이터 처리 및 저장
@@ -85,7 +86,7 @@ def exchange(request):
                 # 중복 데이터 확인
                 existing_entry = Exchange.objects.filter(
                     cur_unit=item.get('cur_unit'),
-                    searchdate=formatted_date
+                    update_date=dateform_date
                 ).exists()
 
                 if existing_entry:

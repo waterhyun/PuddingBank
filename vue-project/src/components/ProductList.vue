@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h3>Article List</h3>
-    <ArticleListItem 
+    <h3>Products List</h3>
+    <ProductListItem 
     v-for="article in store.articles"
     :key="article.id"
     :article="article"
@@ -13,13 +13,8 @@
 <script setup>
 // import { onMounted } from 'vue';
 import { useArticleStore } from '@/stores/article'
-import ArticleListItem from './ArticleListItem.vue';
+import ProductListItem from './ProductListItem.vue';
 const store = useArticleStore()
-// onMounted(() => {
-//   store.getArticles()
-// })
-
-// console.log(store.articles)
 
 </script>
 

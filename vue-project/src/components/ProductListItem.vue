@@ -17,7 +17,6 @@ defineProps({
   article: Object,
 });
 
-
 </script>
 
 <style scoped>

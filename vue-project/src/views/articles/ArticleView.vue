@@ -10,7 +10,7 @@
 <script setup>
 import { RouterLink } from 'vue-router';
 import { onMounted } from 'vue';
-import { useArticleStore } from '@/stores/articles'
+import { useArticleStore } from '@/stores/article'
 import ArticleList from '@/components/ArticleList.vue';
 
 const store = useArticleStore()

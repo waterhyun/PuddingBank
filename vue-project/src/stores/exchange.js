@@ -17,5 +17,15 @@ export const useExchangeStore = defineStore('exchanges', () => {
     })
   }
 
-  return { exchanges, getExchanges }
+  const postExchanges = function () {
+    axios({
+      method: 'post',
+      url: 'http://127.0.0.1:8000/api/v1/exchanges/'
+    })
+    .then(res => {
+      console.log('POST 성공:', res.data);
+    })
+  }
+
+  return { exchanges, getExchanges, postExchanges }
 })

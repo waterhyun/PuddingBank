@@ -9,6 +9,7 @@ from .models import Article, Comment
 
 # Create your views here.
 @api_view(['GET', 'POST'])
+# @permission_classes([IsAuthenticated])  # 인증된 사용자만 접근 허용
 def article_list_create(request):
     # 전체 게시글 조회
     if request.method == 'GET':
@@ -19,7 +20,7 @@ def article_list_create(request):
     elif request.method == 'POST':
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.save() 
             return Response(serializer.data)
 
 
@@ -43,14 +44,14 @@ def article_detail(request, article_id):
         # 게시글 수정
         serializer = ArticleSerializer(article, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save() # 추가 user=request.user
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
 
     elif request.method == 'DELETE':
         # 게시글 삭제
-        article.delete()
+        article.delete() 
         return Response({"message": "Article deleted successfully"})
 
 @api_view(['POST'])
@@ -60,7 +61,7 @@ def comment_create(request, article_id):
     article = get_object_or_404(Article, pk=article_id)  # 게시글 가져오기
     serializer = CommentSerializer(data=request.data)  # 요청 데이터 직렬화
     if serializer.is_valid(raise_exception=True):
-        serializer.save(article=article, user=request.user)  # 댓글 생성 시 게시글 연결
+        serializer.save(article=article)  # 댓글 생성 시 게시글 연결 # 추가 : user=request.user
         return Response(serializer.data, status=201)  # 성공 응답
 
 @api_view(['PUT', 'DELETE'])
@@ -70,8 +71,8 @@ def comment_detail(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
 
     # 요청자가 댓글 작성자인지 확인
-    if comment.user != request.user:
-        raise PermissionDenied("You do not have permission to modify or delete this comment.")
+    # if comment.user != request.user:
+    #     raise PermissionDenied("You do not have permission to modify or delete this comment.")
 
     if request.method == 'PUT':
         # 댓글 수정

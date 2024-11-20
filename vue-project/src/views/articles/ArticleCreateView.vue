@@ -17,7 +17,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useArticleStore } from '../../stores/articles';
+import { useArticleStore } from '../../stores/article';
 const title = ref(null)
 const content = ref(null)
 const store = useArticleStore()

@@ -23,6 +23,7 @@ const handleLogout = async () => {
       <nav>
         <div>
           <RouterLink to="/">Home</RouterLink> |
+          <RouterLink to="/products">예적금비교</RouterLink> | 
           <RouterLink to="/articles">게시판</RouterLink> |
           <RouterLink to="/banks">은행 찾기</RouterLink> |
           <RouterLink to="/exchanges">환율계산기</RouterLink>
