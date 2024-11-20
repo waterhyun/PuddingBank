@@ -1,82 +1,86 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from rest_framework.authtoken.models import Token
-from django.core.validators import MinValueValidator
-from datetime import date
+from dj_rest_auth.registration.serializers import RegisterSerializer
+from rest_framework import serializers
 
 User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    password_confirm = serializers.CharField(write_only=True)
-    birthdate = serializers.DateField()
+from dj_rest_auth.registration.serializers import RegisterSerializer
+from rest_framework import serializers
 
-    class Meta:
-        model = User
-        fields = (
-            'id', 
-            'username', 
-            'password',
-            'password_confirm',
-            'email',
-            'birthdate',
-            'created_at',
-            'updated_at',
-        )
-        read_only_fields = ('created_at', 'updated_at',)
+class CustomRegisterSerializer(RegisterSerializer):
+    name = serializers.CharField(required=True)
+    birthdate = serializers.DateField(required=True)
+    phone = serializers.CharField(required=False, allow_blank=True)
+
+    def get_cleaned_data(self):
+        data = super().get_cleaned_data()
+        data.update({
+            'name': self.validated_data.get('name', ''),
+            'birthdate': self.validated_data.get('birthdate', ''),
+            'phone': self.validated_data.get('phone', ''),
+        })
+        return data
+
+    def save(self, request):
+        user = super().save(request)
+        user.name = self.validated_data.get('name', '')
+        user.birthdate = self.validated_data.get('birthdate')
+        user.phone = self.validated_data.get('phone', '')
+        user.save()
+        return user
 
     def validate(self, data):
-        # 비밀번호 일치 검증
-        if data.get('password') != data.get('password_confirm'):
-            raise serializers.ValidationError("비밀번호가 일치하지 않습니다.")
+        # 기본 유효성 검사
+        data = super().validate(data)
         
-        # 생년월일 유효성 검사
-        if data.get('birthdate'):
-            if data['birthdate'] > date.today():
-                raise serializers.ValidationError("올바른 생년월일을 입력해주세요.")
+        # birthdate 필수 필드 검사
+        if not data.get('birthdate'):
+            raise serializers.ValidationError({
+                "birthdate": "생년월일은 필수 입력 항목입니다."
+            })
+            
+        # name 필수 필드 검사
+        if not data.get('name'):
+            raise serializers.ValidationError({
+                "name": "이름은 필수 입력 항목입니다."
+            })
             
         return data
 
-    def create(self, validated_data):
-        # password_confirm 필드 제거
-        validated_data.pop('password_confirm', None)
-        
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data.get('email', ''),
-            password=validated_data['password'],
-            birthdate=validated_data.get('birthdate'),
-        )
-        Token.objects.create(user=user)
-        return user
-
-class UserUpdateSerializer(serializers.ModelSerializer):
-    """사용자 정보 수정을 위한 시리얼라이저"""
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
+            'id',
+            'username',
+            'name',
             'email',
             'birthdate',
+            'phone',
+            'created_at',
+            'updated_at'
         )
+        read_only_fields = ('created_at', 'updated_at')
 
-
-# accounts/serializers.py에 UserUpdateSerializer 추가
 class UserUpdateSerializer(serializers.ModelSerializer):
-    """사용자 정보 수정을 위한 시리얼라이저"""
     class Meta:
         model = User
-        fields = ('email', 'birthdate')
+        fields = ('email', 'birthdate', 'name', 'phone')
+        extra_kwargs = {
+            'email': {'required': False},
+            'birthdate': {'required': False},
+            'name': {'required': False},
+            'phone': {'required': False},
+        }
         
     def validate_email(self, value):
-        """이메일 중복 검사"""
         user = self.context['request'].user
         if User.objects.exclude(pk=user.pk).filter(email=value).exists():
             raise serializers.ValidationError("이미 사용 중인 이메일입니다.")
         return value
-
-    def update(self, instance, validated_data):
-        """사용자 정보 업데이트"""
-        instance.email = validated_data.get('email', instance.email)
-        instance.birthdate = validated_data.get('birthdate', instance.birthdate)
-        instance.save()
-        return instance
+        
+    def validate_name(self, value):
+        user = self.context['request'].user
+        if User.objects.exclude(pk=user.pk).filter(name=value).exists():
+            raise serializers.ValidationError("이미 사용 중인 이름입니다.")
+        return value
