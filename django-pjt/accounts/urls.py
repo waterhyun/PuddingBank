@@ -2,10 +2,10 @@
 from django.urls import path
 from . import views
 
+app_name = 'accounts'
+
 urlpatterns = [
-    path('signup/', views.signup, name='signup'),
-    path('login/', views.login, name='login'),
-    path('logout/', views.logout, name='logout'),
+    # 커스텀 프로필 관련 URLs만 포함
     path('profile/', views.profile, name='profile'),
     path('profile/update/', views.profile_update, name='profile_update'),
     path('profile/delete/', views.profile_delete, name='profile_delete'),

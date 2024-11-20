@@ -94,8 +94,19 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+    'DATE_INPUT_FORMATS': ['%Y-%m-%d', 'iso-8601'],
 }
 
+REST_AUTH = {
+    'USER_DETAILS_SERIALIZER': 'accounts.serializers.UserSerializer',
+    'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
+}
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # 이메일 인증 비활성화
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
