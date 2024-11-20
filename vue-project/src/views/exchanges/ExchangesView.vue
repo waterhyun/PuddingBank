@@ -81,7 +81,7 @@
 // import ArticleList from '@/components/ArticleList.vue';
 // import { useArticleStore } from '../stores/articles';
 import { onMounted } from 'vue';
-import { useExchangeStore } from '@/stores/exchanges';
+import { useExchangeStore } from '@/stores/exchange';
 import { ref, computed } from 'vue';
 const selectedCountry = ref("")
 const dollar_amount = ref(0)
@@ -92,7 +92,7 @@ const result_dollar = ref(0)
 const store = useExchangeStore()
 
 // 서버에서 기준 시간(searchdate) 가져오기
-
+// 추가해야함
 
 // 가나다 순으로 정렬된 데이터를 제공하는 computed 속성
 const sortedExchanges = computed(() => {
@@ -138,9 +138,9 @@ const dollarTowon  = function() {
   }
   
   if (data.cur_nm == '일본 옌'){
-    result_won.value = dollar_amount*(data.ttb/100)
+    result_won.value = dollar_amount.value*(data.ttb/100)
   } else {
-    result_won.value = dollar_amount*(data.ttb)
+    result_won.value = dollar_amount.value*(data.ttb)
   }
   result_dollar.value = 0;
 }
@@ -172,18 +172,23 @@ const wonTodollar  = function() {
   }
   
   if (data.cur_nm == '일본 옌'){
-    result_dollar.value = (won_amount/(data.tts/100)).toFixed(4)
+    result_dollar.value = (won_amount.value/(data.tts/100)).toFixed(4)
   } else {
-    result_dollar.value = (won_amount/(data.tts)).toFixed(4)
+    result_dollar.value = (won_amount.value/(data.tts)).toFixed(4)
   } 
   result_won.value = 0;
 }
 
 
-onMounted(() => {
-  store.getExchanges();
-  // fetchExchangeData();
-})
+onMounted(async () => {
+  try {
+    // await store.postExchanges(); // POST 요청으로 데이터 저장
+    await store.getExchanges(); // 저장된 데이터 가져오기
+    console.log(store.exchanges)
+  } catch (error) {
+    console.error('데이터 처리 중 에러 발생:', error);
+  }
+});
 
 
 </script>

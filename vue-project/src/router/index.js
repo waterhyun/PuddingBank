@@ -9,6 +9,7 @@ import LoginView from '@/views/auth/LoginView.vue'
 import ProfileView from '@/views/auth/ProfileView.vue'
 import SignUpView from '@/views/auth/SignUpView.vue'
 import { useAuthStore } from '@/stores/auth'
+import ProductsView from '@/views/products/ProductsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -61,6 +62,11 @@ const router = createRouter({
       name: 'Profile',
       component: () => import('@/views/auth/ProfileView.vue'),
       meta: { requiresAuth: true }  // beforeEnter 대신 meta 사용
+    },
+    {
+      path: '/products',
+      name: 'Products',
+      component: ProductsView
     }
   ] 
 })
