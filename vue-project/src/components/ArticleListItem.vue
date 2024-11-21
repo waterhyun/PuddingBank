@@ -1,7 +1,7 @@
 <template>
   <RouterLink
     :to="{ 
-      name: 'articledetail', 
+      name: 'ArticleDetail', 
       params: { id: article.id }
     }"
     class="article-card"

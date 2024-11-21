@@ -4,11 +4,9 @@ from django.conf import settings
 class Article(models.Model):
     """게시글 모델"""
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='articles',
-        null=True,  # 추후 삭제 Null 값 허용
-        blank=True  # 추후 삭제 폼에서 입력 생략 가능
+        related_name='articles'
     )
     title = models.CharField(max_length=100)
     content = models.TextField()
@@ -37,9 +35,7 @@ class Comment(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='comments',
-        null=True,  # 추후 삭제 Null 값 허용
-        blank=True  # 추후 삭제 폼에서 입력 생략 가능
+        related_name='comments'
     )
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

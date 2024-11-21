@@ -67,3 +67,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return obj.like_users.filter(id=request.user.id).exists()
         return False
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

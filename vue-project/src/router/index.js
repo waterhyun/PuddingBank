@@ -21,17 +21,17 @@ const router = createRouter({
     },
     { // 게시글 전체 조회
       path: '/articles/',
-      name: 'articles',
+      name: 'Articles',
       component: ArticleView,
     },
     { // 게시글 생성
-      path: '/create',
-      name: 'create',
+      path: '/articlecreate',
+      name: 'ArticleCreate',
       component: ArticleCreateView
     },
     { //단일 게시글 상세 페이지
       path:'/articledetail/:id',  //:id
-      name:'articledetail',
+      name:'ArticleDetail',
       component: ArticleDetailView,
       props: true
     },
@@ -89,5 +89,24 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  // ArticleDetail 페이지로 가려고 할 때
+  if (to.name === 'ArticleDetail') {
+    // 로그인된 상태라면 접근 허용
+    if (authStore.isAuthenticated) {
+      next()
+    } else {
+      // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+      alert('로그인이 필요한 서비스입니다.')
+      // next({ name: 'Login' })
+    }
+  } else {
+    next()
+  }
+})
+
 
 export default router
