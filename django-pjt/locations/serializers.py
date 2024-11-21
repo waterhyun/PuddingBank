@@ -44,24 +44,23 @@ class BankDetailSerializer(serializers.ModelSerializer):
         )
 
 class KakaoLocalSerializer(serializers.Serializer):
-    """카카오 로컬 API 응답 시리얼라이저"""
     place_name = serializers.CharField()
     address_name = serializers.CharField()
-    road_address_name = serializers.CharField(allow_null=True)
-    phone = serializers.CharField(required=False, allow_blank=True)
+    road_address_name = serializers.CharField(allow_null=True, allow_blank=True)
+    phone = serializers.CharField(allow_null=True, allow_blank=True)
     place_url = serializers.URLField()
     category_name = serializers.CharField()
     category_group_code = serializers.CharField()
     category_group_name = serializers.CharField()
-    x = serializers.DecimalField(max_digits=20, decimal_places=16)
-    y = serializers.DecimalField(max_digits=20, decimal_places=16)
-    distance = serializers.IntegerField(allow_null=True)
+    x = serializers.CharField()
+    y = serializers.CharField()
+    distance = serializers.CharField(allow_null=True, allow_blank=True)
 
-    def create(self, validated_data):
-        return Bank.objects.create(**validated_data)
+    # def create(self, validated_data):
+    #     return Bank.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
+    # def update(self, instance, validated_data):
+    #     for attr, value in validated_data.items():
+    #         setattr(instance, attr, value)
+    #     instance.save()
+    #     return instance
