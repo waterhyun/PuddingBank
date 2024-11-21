@@ -101,3 +101,24 @@ def comment_detail(request, comment_id):
     elif request.method == 'DELETE':
         comment.delete()
         return Response({"message": "Comment deleted successfully"})
+    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def article_like(request, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+    
+    # 현재 사용자가 이미 좋아요를 눌렀는지 확인
+    if request.user in article.like_users.all():
+        # 좋아요 취소
+        article.like_users.remove(request.user)
+        liked = False
+    else:
+        # 좋아요 추가
+        article.like_users.add(request.user)
+        liked = True
+    
+    return Response({
+        'liked': liked,
+        'like_count': article.like_users.count()
+    })

@@ -4,6 +4,22 @@
       <div class="article-detail">
         <h1 class="article-id">{{ id }}번 게시글 상세페이지</h1>
 
+        <!-- 게시글 메타 정보에 좋아요 버튼 추가 -->
+        <div class="article-meta">
+          <div class="like-section">
+            <button 
+              @click="handleLike" 
+              class="like-button"
+              :class="{ 'liked': store.article.is_liked }"
+            >
+              <i class="fas fa-heart"></i>
+              <span>{{ store.article.like_users_count }}</span>
+            </button>
+          </div>
+          <span class="detail-author">작성자: {{ store.article.username }}</span>
+          <span class="detail-date">작성일: {{ store.article.created_at }}</span>
+        </div>
+
         <!-- 게시글 수정 모드 -->
         <div v-if="editMode === 'article'" class="edit-form">
           <input 
@@ -285,6 +301,33 @@ const handleDeleteComment = async (commentId) => {
     }
   }
 }
+
+const handleLike = async () => {
+  if (!authStore.user) {
+    alert('로그인이 필요합니다.')
+    router.push({ name: 'Login' })
+    return
+  }
+
+  const token = localStorage.getItem('token')
+  try {
+    await axios({
+      method: 'post',
+      url: `http://127.0.0.1:8000/api/v1/articles/${id}/like/`,
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    })
+    store.getArticle(id)
+  } catch (error) {
+    if (error.response?.status === 401) {
+      alert('로그인이 필요합니다.')
+      router.push({ name: 'Login' })
+    } else {
+      alert('좋아요 처리에 실패했습니다.')
+    }
+  }
+}
 </script>
 
 
@@ -436,5 +479,37 @@ button:hover {
 .comment-button:disabled {
   background-color: #bdc3c7;
   cursor: not-allowed;
+}
+
+.like-section {
+  display: flex;
+  align-items: center;
+}
+
+.like-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background-color: #f8f9fa;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.like-button:hover {
+  background-color: #ffe3e3;
+  color: #ff4757;
+}
+
+.like-button.liked {
+  background-color: #ff4757;
+  color: white;
+}
+
+.like-button i {
+  font-size: 1.1rem;
 }
 </style>
