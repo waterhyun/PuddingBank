@@ -15,6 +15,15 @@ const handleLogout = async () => {
     console.error('Logout failed:', error)
   }
 }
+
+// 새로 추가하는 메소드
+const handleBankSearch = () => {
+  if (router.currentRoute.value.path === '/banks') {
+    window.location.reload()
+  } else {
+    router.push('/banks')
+  }
+}
 </script>
 
 
@@ -25,7 +34,7 @@ const handleLogout = async () => {
           <RouterLink to="/">Home</RouterLink> |
           <RouterLink to="/products">예적금비교</RouterLink> | 
           <RouterLink to="/articles">게시판</RouterLink> |
-          <RouterLink to="/banks">은행 찾기</RouterLink> |
+          <a href="#" @click.prevent="handleBankSearch">은행 찾기</a> |
           <RouterLink to="/exchanges">환율계산기</RouterLink>
         </div>
         <div class="'auth-menu'">

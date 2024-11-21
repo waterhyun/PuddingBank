@@ -134,36 +134,83 @@ export default {
       }
     },
     async getCurrentLocation() {
-      this.loading = true
-      this.error = null
-      if (navigator.geolocation) {
-        try {
-          const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-              enableHighAccuracy: true,
-              timeout: 10000,
-              maximumAge: 0
-            })
-          })
-          this.currentLocation = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          }
-          const currentPosition = new kakao.maps.LatLng(
-            position.coords.latitude,
-            position.coords.longitude
-          )
-          this.map.setCenter(currentPosition)
-          this.map.setLevel(3)
-          this.searchKeyword.trim() ? this.searchNearbyWithKeyword() : this.searchNearby()
-        } catch (error) {
-          this.error = '위치 정보를 가져올 수 없습니다: ' + error.message
-          console.error('Geolocation error:', error)
-        }
-      } else {
-        this.error = '이 브라우저에서는 위치 정보를 지원하지 않습니다.'
+      this.loading = true;
+      this.error = null;
+      
+      if (!navigator.geolocation) {
+        this.error = '이 브라우저에서는 위치 정보를 지원하지 않습니다.';
+        this.loading = false;
+        return;
       }
-      this.loading = false
+
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          });
+        });
+
+        this.currentLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+
+        const currentPosition = new kakao.maps.LatLng(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+        
+        this.map.setCenter(currentPosition);
+        this.map.setLevel(3);
+
+        // 키워드가 있는 경우 keyword 검색 API를, 없는 경우 nearby API를 호출
+        if (this.searchKeyword.trim()) {
+          await this.searchByKeywordAndLocation();
+        } else {
+          await this.searchNearby();
+        }
+
+      } catch (error) {
+        this.error = '위치 정보를 가져올 수 없습니다: ' + error.message;
+        console.error('Geolocation error:', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // 새로 추가하는 메소드
+    async searchByKeywordAndLocation() {
+      try {
+        const bounds = this.map.getBounds();
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+
+        const response = await axios.get('/api/v1/locations/banks/search/', {
+          params: {
+            keyword: this.searchKeyword,
+            sw_lat: sw.getLat(),
+            sw_lng: sw.getLng(),
+            ne_lat: ne.getLat(),
+            ne_lng: ne.getLng()
+          }
+        });
+
+        if (response.data.documents && response.data.documents.length > 0) {
+          this.banks = response.data.documents;
+          this.updateMap();
+          this.showResearchButton = false;
+          this.lastSearchKeyword = this.searchKeyword;
+        } else {
+          this.error = '현재 위치 주변에 검색 결과가 없습니다.';
+          this.banks = [];
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.error = '검색 중 오류가 발생했습니다.';
+        this.banks = [];
+      }
     },
     async searchNearbyWithKeyword() {
       try {
