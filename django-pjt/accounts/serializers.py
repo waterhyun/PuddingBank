@@ -44,6 +44,18 @@ class CustomRegisterSerializer(RegisterSerializer):
             raise serializers.ValidationError({
                 "name": "이름은 필수 입력 항목입니다."
             })
+
+        # 이메일 중복 검사
+        if User.objects.filter(email=data.get('email')).exists():
+            raise serializers.ValidationError({
+                "email": "이미 사용 중인 이메일입니다."
+            })
+        
+        # 이름 중복 검사
+        if User.objects.filter(name=data.get('name')).exists():
+            raise serializers.ValidationError({
+                "name": "이미 사용 중인 이름입니다."
+            })
             
         return data
 
