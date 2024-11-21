@@ -1,14 +1,26 @@
 <template>
-  <RouterLink
-    :to="{ 
-      name: 'articledetail', 
-      params: { id: article.id }
-    }"
-    class="article-card"
-  >
-    <h2 class="article-title">{{ article.id }}번 게시글</h2>
-    <p class="article-info"><strong>제목:</strong> {{ article.title }}</p>
-  </RouterLink>
+  <div class="article-card">
+    <RouterLink
+      :to="{ 
+        name: 'ArticleDetail', 
+        params: { id: article.id }
+      }"
+      class="article-link"
+    >
+      <h2 class="article-title">{{ article.id }}번 게시글</h2>
+      <p class="article-info"><strong>제목:</strong> {{ article.title }}</p>
+      <div class="article-stats">
+        <span class="stat-item">
+          <i class="fas fa-heart"></i>
+          {{ article.like_count }}
+        </span>
+        <span class="stat-item">
+          <i class="fas fa-comment"></i>
+          {{ article.comment_count }}
+        </span>
+      </div>
+    </RouterLink>
+  </div>
 </template>
 
 <script setup>
@@ -22,21 +34,23 @@ defineProps({
 
 <style scoped>
 .article-card {
-  display: block; /* 박스 전체를 클릭 가능 영역으로 설정 */
   padding: 20px;
   margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  text-decoration: none; /* 기본 링크 스타일 제거 */
-  color: inherit; /* 부모 요소의 색상 상속 */
-  cursor: pointer; /* 마우스 포인터 변경 */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .article-card:hover {
-  transform: translateY(-5px); /* hover 효과 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* hover 시 그림자 */
-  background-color: #f9f9f9; /* hover 시 배경색 변경 */
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+.article-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 .article-title {
@@ -47,6 +61,27 @@ defineProps({
 
 .article-info {
   font-size: 1rem;
-  margin: 0;
+  margin: 0 0 10px;
+}
+
+.article-stats {
+  display: flex;
+  gap: 15px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-item i.fa-heart {
+  color: #ff4757;
+}
+
+.stat-item i.fa-comment {
+  color: #2f3542;
 }
 </style>
