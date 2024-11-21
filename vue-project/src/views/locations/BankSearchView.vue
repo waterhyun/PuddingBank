@@ -119,10 +119,10 @@ export default {
     initializeMapEvents() {
       kakao.maps.event.addListener(this.map, 'dragend', this.showResearchButtonIfNeeded)
       kakao.maps.event.addListener(this.map, 'zoom_changed', this.showResearchButtonIfNeeded)
-      kakao.maps.event.addListener(this.map, 'bounds_changed', this.debounce(this.handleResearch, 1000))
+      // kakao.maps.event.addListener(this.map, 'bounds_changed', this.debounce(this.handleResearch, 1000))
     },
     showResearchButtonIfNeeded() {
-      if (this.lastSearchKeyword) {
+      if (this.lastSearchKeyword || (this.currentLocation.latitude && this.currentLocation.longitude)) {
         this.showResearchButton = true
       }
     },
@@ -286,7 +286,8 @@ export default {
       }
     },
     async handleResearch() {
-      if (!this.lastSearchKeyword || this.loading) return
+      // if (!this.lastSearchKeyword || this.loading) return
+      if (this.loading) return
       
       const bounds = this.map.getBounds()
       const sw = bounds.getSouthWest()
@@ -295,22 +296,65 @@ export default {
       this.loading = true
       this.error = null
       
-      try {
-        const response = await axios.get('/api/v1/locations/banks/search/', {
-          params: {
-            keyword: this.lastSearchKeyword,
-            sw_lat: sw.getLat(),
-            sw_lng: sw.getLng(),
-            ne_lat: ne.getLat(),
-            ne_lng: ne.getLng()
+    //   try {
+    //     const response = await axios.get('/api/v1/locations/banks/search/', {
+    //       params: {
+    //         keyword: this.lastSearchKeyword,
+    //         sw_lat: sw.getLat(),
+    //         sw_lng: sw.getLng(),
+    //         ne_lat: ne.getLat(),
+    //         ne_lng: ne.getLng()
+    //       }
+    //     })
+    //     if (response.data.documents) {
+    //       this.banks = response.data.documents
+    //       this.updateMarkersOnly()
+    //       this.showResearchButton = false
+    //     } else {
+    //       this.error = '검색 결과가 없습니다.'
+    //     }
+    //   } catch (error) {
+    //     console.error('Error:', error)
+    //     this.error = '검색 중 오류가 발생했습니다.'
+    //   } finally {
+    //     this.loading = false
+    //   }
+    // },
+    try {
+        // 키워드가 있으면 키워드 검색, 없으면 주변 검색
+        if (this.lastSearchKeyword) {
+          const response = await axios.get('/api/v1/locations/banks/search/', {
+            params: {
+              keyword: this.lastSearchKeyword,
+              sw_lat: sw.getLat(),
+              sw_lng: sw.getLng(),
+              ne_lat: ne.getLat(),
+              ne_lng: ne.getLng()
+            }
+          })
+          if (response.data.documents) {
+            this.banks = response.data.documents
+            this.updateMarkersOnly()
+            this.showResearchButton = false
+          } else {
+            this.error = '검색 결과가 없습니다.'
           }
-        })
-        if (response.data.documents) {
-          this.banks = response.data.documents
-          this.updateMarkersOnly()
-          this.showResearchButton = false
         } else {
-          this.error = '검색 결과가 없습니다.'
+          // 주변 검색 API 호출
+          const response = await axios.get('/api/v1/locations/banks/nearby/', {
+            params: {
+              latitude: this.map.getCenter().getLat(),
+              longitude: this.map.getCenter().getLng(),
+              radius: 1000
+            }
+          })
+          if (response.data.banks) {
+            this.banks = response.data.banks
+            this.updateMarkersOnly()
+            this.showResearchButton = false
+          } else {
+            this.error = '주변에 은행이 없습니다.'
+          }
         }
       } catch (error) {
         console.error('Error:', error)

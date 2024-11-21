@@ -16,7 +16,7 @@ const handleLogout = async () => {
   }
 }
 
-// 새로 추가하는 메소드
+// 클릭 할 때 마다 새로고침이 되도록 함
 const handleBankSearch = () => {
   if (router.currentRoute.value.path === '/banks') {
     window.location.reload()
