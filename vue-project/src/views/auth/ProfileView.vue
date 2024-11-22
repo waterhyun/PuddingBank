@@ -164,9 +164,11 @@ const isLoading = ref(false)
 const errors = ref({})
 
 const editForm = ref({
+  username: '', // 추가
   name: '',
   email: '',
-  phone: ''
+  phone: '',
+  birthdate: '' // 필요한 경우 추가
 })
 
 const passwordForm = ref({
@@ -175,12 +177,14 @@ const passwordForm = ref({
   new_password2: ''
 })
 
-// 수정 모드 시작
+// startEdit 수정 (editForm 변경에 따른)
 const startEdit = () => {
   editForm.value = {
+    username: user.value?.username || '',
     name: user.value?.name || '',
     email: user.value?.email || '',
-    phone: user.value?.phone || ''
+    phone: user.value?.phone || '',
+    birthdate: user.value?.birthdate || ''
   }
   isEditing.value = true
   isChangingPassword.value = false
@@ -198,6 +202,7 @@ const startPasswordChange = () => {
   isEditing.value = true
   errors.value = {}
 }
+
 
 // 수정 취소
 const cancelEdit = () => {
@@ -218,6 +223,7 @@ const handleUpdate = async () => {
     isLoading.value = true
     errors.value = {}
     await authStore.updateProfile(editForm.value)
+    await authStore.fetchUserDetails()
     isEditing.value = false
     alert('프로필이 성공적으로 업데이트되었습니다.')
   } catch (error) {

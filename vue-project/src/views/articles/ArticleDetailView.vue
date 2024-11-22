@@ -1,180 +1,343 @@
 <template>
   <div class="article-container">
-    <!-- 게시글 섹션 -->
     <div v-if="store.article">
       <div class="article-detail">
         <h1 class="article-id">{{ id }}번 게시글 상세페이지</h1>
-        
+
+        <!-- 게시글 메타 정보에 좋아요 버튼 추가 -->
+        <div class="article-meta">
+          <div class="like-section">
+            <button 
+              @click="handleLike" 
+              class="like-button"
+              :class="{ 'liked': store.article.is_liked }"
+            >
+              <i class="fas fa-heart"></i>
+              <span>{{ store.article.like_users_count }}</span>
+            </button>
+          </div>
+          <span class="detail-author">작성자: {{ store.article.username }}</span>
+          <span class="detail-date">작성일: {{ store.article.created_at }}</span>
+        </div>
+
+        <!-- 게시글 수정 모드 -->
         <div v-if="editMode === 'article'" class="edit-form">
-          <input
-            type="text"
-            v-model="editTitle"
-            class="edit-input"
+          <input 
+            type="text" 
+            v-model="editTitle" 
+            class="edit-input" 
             placeholder="제목 수정"
           />
-          <textarea
-            v-model="editContent"
-            class="edit-input"
+          <textarea 
+            v-model="editContent" 
+            class="edit-input" 
             placeholder="내용 수정"
           ></textarea>
-          <button @click="updateArticle" class="save-button">저장</button>
-          <button @click="cancelEditArticle" class="cancel-button">취소</button>
+          <div class="button-group">
+            <button @click="handleUpdateArticle" class="save-button">저장</button>
+            <button @click="cancelEditArticle" class="cancel-button">취소</button>
+          </div>
         </div>
-        
+
+        <!-- 게시글 표시 모드 -->
         <div v-else>
           <h3 class="article-title">제목: {{ store.article.title }}</h3>
           <p class="article-content">내용: {{ store.article.content }}</p>
-          <button @click="startEditArticle" class="edit-button">수정</button>
-          <button @click="store.deleteArticle(id)" class="delete-button">삭제</button>
+          <!-- 작성자 본인만 수정/삭제 버튼 보이도록 -->
+          <div v-if="authStore.user && store.article.user === authStore.user.id" class="button-group">
+            <button @click="startEditArticle" class="edit-button">수정</button>
+            <button @click="handleDeleteArticle" class="delete-button">삭제</button>
+          </div>
         </div>
-        
+
         <div class="detail-meta">
           <span class="detail-author">작성자: {{ store.article.username }}</span>
           <span class="detail-date">작성일: {{ store.article.created_at }}</span>
         </div>
       </div>
-      
+
       <!-- 댓글 섹션 -->
       <div class="comment-section">
         <h3>댓글</h3>
+        <!-- 로그인한 사용자만 댓글 작성 가능하도록 -->
+        <div v-if="authStore.user" class="comment-form">
+          <input 
+            type="text" 
+            v-model="commentContent" 
+            class="comment-input" 
+            placeholder="댓글을 입력하세요..."
+          />
+          <button 
+            @click="handleSubmitComment" 
+            class="comment-button" 
+            :disabled="!commentContent.trim()"
+          >
+            댓글 추가
+          </button>
+        </div>
+        <div v-else class="login-message">
+          <p>댓글을 작성하려면 로그인이 필요합니다.</p>
+        </div>
+
         <ul class="comment-list">
           <li v-for="comment in store.comments" :key="comment.id" class="comment-item">
-            <p class="comment-author">유저 : {{ comment.username }}</p>
-            <p>수정일 : {{ comment.updated_at }}</p>
-            
+            <p class="comment-author">유저: {{ comment.username }}</p>
+            <p class="comment-date">작성일: {{ comment.created_at }}</p>
+
+            <!-- 댓글 수정 모드 -->
             <div v-if="editMode === comment.id" class="edit-form">
-              <input 
-                type="text"
-                v-model="editContent"
-                class="edit-input"
-              />
-              <button @click="updateComment(comment.id, editContent)" class="save-button">저장</button>
-              <button @click="cancelEdit" class="cancel-button">취소</button>
+              <input type="text" v-model="editContent" class="edit-input" />
+              <div class="button-group">
+                <button @click="handleUpdateComment(comment.id, editContent)" class="save-button">저장</button>
+                <button @click="cancelEdit" class="cancel-button">취소</button>
+              </div>
             </div>
 
+            <!-- 댓글 표시 모드 -->
             <div v-else>
               <p class="comment-content">{{ comment.content }}</p>
-              <button @click="startEdit(comment)" class="edit-button">수정</button>
-              <button @click="store.deleteComment(comment.id)" class="delete-button">삭제</button>
+              <!-- 댓글 작성자 본인만 수정/삭제 버튼 보이도록 -->
+              <div v-if="authStore.user && comment.user === authStore.user.id" class="button-group">
+                <button @click="startEdit(comment)" class="edit-button">수정</button>
+                <button @click="handleDeleteComment(comment.id)" class="delete-button">삭제</button>
+              </div>
             </div>
           </li>
         </ul>
-
-        <div class="comment-form">
-          <input
-            type="text"
-            v-model="newComment"
-            class="comment-input"
-            placeholder="댓글을 입력하세요..."
-          />
-          <button @click="addComment" class="comment-button">댓글 추가</button>
-        </div>
       </div>
 
       <RouterLink to="/articles/" class="back-button">목록으로 돌아가기</RouterLink>
     </div>
     <div v-else>
-    <p>게시글 데이터를 불러오는 중입니다...</p>
+      <p>게시글 데이터를 불러오는 중입니다...</p>
     </div>
   </div>
 </template>
 
+
 <script setup>
-import { onMounted, ref } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
-import { useRoute } from 'vue-router';
-import { useArticleStore } from '@/stores/article';
+import { onMounted, ref } from 'vue'
+import { RouterLink, useRouter, useRoute } from 'vue-router'
+import { useArticleStore } from '@/stores/article'
+import { useAuthStore } from '@/stores/auth'
+import axios from 'axios'
 
-// 게시글 관련 상태 및 로직
-const route = useRoute();
-const id = route.params.id; // 전달받은 id
-const store = useArticleStore();
-const newComment = ref(''); // 댓글 입력 내용
-const editMode = ref(null); // 수정 모드: 'article' 또는 댓글 ID
-const editTitle = ref(''); // 게시글 제목 수정
-const editContent = ref(''); // 게시글 및 댓글 내용 수정
+const route = useRoute()
+const router = useRouter()
+const id = route.params.id
+const store = useArticleStore()
+const authStore = useAuthStore()
 
-// 게시글 데이터 가져오기
+const commentContent = ref('')
+const editMode = ref(null)
+const editTitle = ref('')
+const editContent = ref('')
+
 onMounted(() => {
-  store.getArticle(id);
-});
+  store.getArticle(id)
+})
 
-// 게시글 수정 시작
+// 게시글 수정 관련
 const startEditArticle = () => {
-  editMode.value = 'article'; // 게시글 수정 모드
-  editTitle.value = store.article.title; // 기존 제목 설정
-  editContent.value = store.article.content; // 기존 내용 설정
-};
-
-// 게시글 수정 저장
-const updateArticle = async () => {
-  if (editTitle.value.trim() === '' || editContent.value.trim() === '') return; // 빈 값 방지
-  try {
-    await store.updateArticle(id, {
-      title: editTitle.value,
-      content: editContent.value,
-    });
-    editMode.value = null; // 수정 모드 종료
-  } catch (error) {
-    console.error('게시글 수정 중 에러:', error);
-  }
-};
-
-// 게시글 수정 취소
-const cancelEditArticle = () => {
-  editMode.value = null; // 수정 모드 종료
-  editTitle.value = ''; // 제목 초기화
-  editContent.value = ''; // 내용 초기화
-};
-
-// 댓글 추가 함수
-const addComment = async () => {
-  if (!newComment.value.trim()) {
-    alert('댓글 내용을 입력해주세요.');
-    return
-  }
-  store.addComment(id, newComment.value) // 댓글 추가 요청
-  newComment.value = '';
+  editMode.value = 'article'
+  editTitle.value = store.article.title
+  editContent.value = store.article.content
 }
 
-// 댓글 수정 시작
+const handleUpdateArticle = async () => {
+  if (editTitle.value.trim() === '' || editContent.value.trim() === '') return
+  
+  const token = localStorage.getItem('token')
+  try {
+    await axios({
+      method: 'put',
+      url: `http://127.0.0.1:8000/api/v1/articles/${id}/`,
+      data: {
+        title: editTitle.value,
+        content: editContent.value,
+      },
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    })
+    editMode.value = null
+    store.getArticle(id)
+  } catch (error) {
+    console.error('Error:', error)
+    if (error.response?.status === 401) {
+      alert('로그인이 필요합니다.')
+      router.push({ name: 'Login' })
+    } else {
+      alert('게시글 수정에 실패했습니다.')
+    }
+  }
+}
+
+
+// 게시글 삭제
+const handleDeleteArticle = async () => {
+  if (!authStore.user) {
+    alert('로그인이 필요합니다.')
+    return
+  }
+
+  if (!confirm('정말 삭제하시겠습니까?')) return
+  
+  const token = localStorage.getItem('token')
+  try {
+    await axios({
+      method: 'delete',
+      url: `http://127.0.0.1:8000/api/v1/articles/${id}/`,
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    })
+    router.push({ name: 'Articles' })
+  } catch (error) {
+    if (error.response?.status === 403) {
+      alert('삭제 권한이 없습니다.')
+    } else {
+      alert('게시글 삭제에 실패했습니다.')
+    }
+  }
+}
+
+
+
+const cancelEditArticle = () => {
+  editMode.value = null
+  editTitle.value = ''
+  editContent.value = ''
+}
+
+// 댓글 관련
+const handleSubmitComment = async () => {
+  if (!commentContent.value.trim()) return
+  
+  const token = localStorage.getItem('token')
+  if (!token) {
+    alert('로그인이 필요합니다.')
+    router.push({ name: 'Login' })
+    return
+  }
+
+  try {
+    await axios({
+      method: 'post',
+      url: `http://127.0.0.1:8000/api/v1/articles/${id}/comments/`,
+      data: {
+        content: commentContent.value
+      },
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    })
+    
+    commentContent.value = ''
+    store.getArticle(id)
+  } catch (error) {
+    if (error.response?.status === 401) {
+      alert('로그인이 필요합니다.')
+      router.push({ name: 'Login' })
+    } else {
+      alert('댓글 작성에 실패했습니다.')
+    }
+  }
+}
+
 const startEdit = (comment) => {
-  editMode.value = comment.id; // 수정 중인 댓글 ID 설정
-  editContent.value = comment.content; // 기존 댓글 내용 설정
-};
+  editMode.value = comment.id
+  editContent.value = comment.content
+}
 
-// 댓글 수정 취소
 const cancelEdit = () => {
-  editMode.value = null; // 수정 모드 종료
-  editContent.value = ''; // 수정 내용 초기화
-};
+  editMode.value = null
+  editContent.value = ''
+}
 
-// 댓글 수정 저장
-const updateComment = (comment_id, editContent) => {
-  if (editContent.trim() === '') return; // 빈 내용 방지
-  const updatedData = { content: editContent }; // 수정된 데이터 생성
-  store.updateComment(comment_id, updatedData); // 스토어 호출
-  cancelEdit(); // 수정 모드 종료
-};
+const handleUpdateComment = async (commentId, content) => {
+  if (!content.trim()) return
+  
+  const token = localStorage.getItem('token')
+  try {
+    await axios({
+      method: 'put',
+      url: `http://127.0.0.1:8000/api/v1/articles/comments/${commentId}/`,
+      data: { content },
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    })
+    
+    cancelEdit()
+    store.getArticle(id)
+  } catch (error) {
+    if (error.response?.status === 401) {
+      alert('권한이 없습니다.')
+    } else {
+      alert('댓글 수정에 실패했습니다.')
+    }
+  }
+}
+
+const handleDeleteComment = async (commentId) => {
+  if (!confirm('댓글을 삭제하시겠습니까?')) return
+  
+  const token = localStorage.getItem('token')
+  try {
+    await axios({
+      method: 'delete',
+      url: `http://127.0.0.1:8000/api/v1/articles/comments/${commentId}/`,
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    })
+    store.getArticle(id)
+  } catch (error) {
+    if (error.response?.status === 401) {
+      alert('권한이 없습니다.')
+    } else {
+      alert('댓글 삭제에 실패했습니다.')
+    }
+  }
+}
+
+const handleLike = async () => {
+  if (!authStore.user) {
+    alert('로그인이 필요합니다.')
+    router.push({ name: 'Login' })
+    return
+  }
+
+  const token = localStorage.getItem('token')
+  try {
+    await axios({
+      method: 'post',
+      url: `http://127.0.0.1:8000/api/v1/articles/${id}/like/`,
+      headers: {
+        'Authorization': `Token ${token}`
+      }
+    })
+    store.getArticle(id)
+  } catch (error) {
+    if (error.response?.status === 401) {
+      alert('로그인이 필요합니다.')
+      router.push({ name: 'Login' })
+    } else {
+      alert('좋아요 처리에 실패했습니다.')
+    }
+  }
+}
 </script>
 
 
 <style scoped>
-/* 전체 폼 컨테이너 */
-.edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 15px;
-  margin-top: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
+.article-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-/* 게시글 섹션 스타일 */
 .article-detail {
   background-color: #f9f9f9;
   border-radius: 10px;
@@ -187,7 +350,7 @@ const updateComment = (comment_id, editContent) => {
   font-size: 1.8em;
   font-weight: bold;
   color: #2c3e50;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -210,26 +373,27 @@ const updateComment = (comment_id, editContent) => {
   color: #7f8c8d;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
-/* 댓글 섹션 스타일 */
 .comment-section {
   background-color: #f4f4f4;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
 }
 
 .comment-list {
   list-style-type: none;
   padding: 0;
-  margin-bottom: 20px;
 }
 
 .comment-item {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
+  background-color: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .comment-author {
@@ -238,84 +402,31 @@ const updateComment = (comment_id, editContent) => {
   margin-bottom: 5px;
 }
 
-.comment-content {
-  font-size: 1em;
-  color: #555;
-}
-
 .comment-form {
   display: flex;
   gap: 10px;
+  margin-top: 20px;
 }
 
-.comment-input {
-  flex: 1;
-  padding: 10px;
-  font-size: 1em;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.edit-form {
+  margin-top: 10px;
 }
 
-.comment-button {
-  padding: 10px 20px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1em;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.comment-button:hover {
-  background-color: #2980b9;
-}
-
-/* 목록으로 돌아가기 버튼 */
-.back-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  background-color: #3498db;
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 1em;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.back-button:hover {
-  background-color: #2980b9;
-}
-
-/* 제목 입력 */
 .edit-input {
   width: 100%;
   padding: 10px;
-  font-size: 1em;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 5px;
-  transition: all 0.3s ease;
+  margin-bottom: 10px;
 }
 
-.edit-input:focus {
-  border-color: #3498db;
-  outline: none;
-  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
-}
-
-/* 버튼 그룹 */
 button {
-  padding: 10px 20px;
-  font-size: 1em;
+  padding: 8px 16px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 .save-button {
@@ -323,17 +434,82 @@ button {
   color: white;
 }
 
-.save-button:hover {
-  background-color: #27ae60;
+.cancel-button {
+  background-color: #e74c3c;
+  color: white;
 }
 
-.cancel-button {
+.edit-button {
+  background-color: #3498db;
+  color: white;
+}
+
+.delete-button {
   background-color: #e74c3c;
   color: white;
   margin-left: 10px;
 }
 
-.cancel-button:hover {
-  background-color: #c0392b;
+.back-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #95a5a6;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.comment-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.comment-button {
+  background-color: #3498db;
+  color: white;
+}
+
+.comment-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.like-section {
+  display: flex;
+  align-items: center;
+}
+
+.like-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background-color: #f8f9fa;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.like-button:hover {
+  background-color: #ffe3e3;
+  color: #ff4757;
+}
+
+.like-button.liked {
+  background-color: #ff4757;
+  color: white;
+}
+
+.like-button i {
+  font-size: 1.1rem;
 }
 </style>

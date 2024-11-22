@@ -3,6 +3,7 @@ from django.db import models
 
 class Bank(models.Model):
     """은행 정보 모델"""
+    # id = models.AutoField(primary_key=True)  # 자동 증가하는 기본 키
     place_name = models.CharField(max_length=100)  # 은행명
     address_name = models.CharField(max_length=200)  # 전체 지번 주소
     road_address_name = models.CharField(max_length=200, null=True, blank=True)  # 전체 도로명 주소

@@ -95,22 +95,18 @@ export default {
       showResearchButton: false
     }
   },
-
   mounted() {
-    // 카카오맵 스크립트 로드
     const script = document.createElement('script')
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_MAP_API_KEY}&autoload=false`
     script.async = true
-    
     script.addEventListener('load', () => {
       kakao.maps.load(() => {
         this.initializeMap()
+        this.initializeMapEvents()
       })
     })
-    
     document.head.appendChild(script)
   },
-
   methods: {
     initializeMap() {
       const container = document.getElementById('map')
@@ -119,69 +115,103 @@ export default {
         level: 3
       }
       this.map = new kakao.maps.Map(container, options)
-
-      // 지도 이벤트 리스너
-      kakao.maps.event.addListener(this.map, 'dragend', () => {
-        if (this.lastSearchKeyword) {
-          this.showResearchButton = true
-        }
-      })
-
-      kakao.maps.event.addListener(this.map, 'zoom_changed', () => {
-        if (this.lastSearchKeyword) {
-          this.showResearchButton = true
-        }
-      })
     },
+    initializeMapEvents() {
+      kakao.maps.event.addListener(this.map, 'dragend', this.showResearchButtonIfNeeded)
+      kakao.maps.event.addListener(this.map, 'zoom_changed', this.showResearchButtonIfNeeded)
+      // kakao.maps.event.addListener(this.map, 'bounds_changed', this.debounce(this.handleResearch, 1000))
+    },
+    showResearchButtonIfNeeded() {
+      if (this.lastSearchKeyword || (this.currentLocation.latitude && this.currentLocation.longitude)) {
+        this.showResearchButton = true
+      }
+    },
+    debounce(func, wait) {
+      let timeout
+      return (...args) => {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => func.apply(this, args), wait)
+      }
+    },
+    async getCurrentLocation() {
+      this.loading = true;
+      this.error = null;
+      
+      if (!navigator.geolocation) {
+        this.error = '이 브라우저에서는 위치 정보를 지원하지 않습니다.';
+        this.loading = false;
+        return;
+      }
 
-    getCurrentLocation() {
-      this.loading = true
-      this.error = null
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          });
+        });
 
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          // 위치 정보 가져오기 성공 시
-          position => {
-            this.currentLocation = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            }
+        this.currentLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
 
-            // 현재 위치로 지도 중심 이동
-            const currentPosition = new kakao.maps.LatLng(
-              position.coords.latitude,
-              position.coords.longitude
-            )
-            this.map.setCenter(currentPosition)
-            this.map.setLevel(3)  // 지도 확대 레벨 설정
+        const currentPosition = new kakao.maps.LatLng(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+        
+        this.map.setCenter(currentPosition);
+        this.map.setLevel(3);
 
-            // 키워드가 있으면 키워드로 주변 검색, 없으면 일반 주변 검색
-            if (this.searchKeyword.trim()) {
-              this.searchNearbyWithKeyword()
-            } else {
-              this.searchNearby()
-            }
-          },
-          // 위치 정보 가져오기 실패 시
-          error => {
-            this.loading = false
-            this.error = '위치 정보를 가져올 수 없습니다: ' + error.message
-            console.error('Geolocation error:', error)
-          },
-          // 옵션 설정
-          {
-            enableHighAccuracy: true,  // 높은 정확도
-            timeout: 10000,            // 10초 타임아웃
-            maximumAge: 0              // 캐시된 위치정보를 사용하지 않음
-          }
-        )
-      } else {
-        this.loading = false
-        this.error = '이 브라우저에서는 위치 정보를 지원하지 않습니다.'
+        // 키워드가 있는 경우 keyword 검색 API를, 없는 경우 nearby API를 호출
+        if (this.searchKeyword.trim()) {
+          await this.searchByKeywordAndLocation();
+        } else {
+          await this.searchNearby();
+        }
+
+      } catch (error) {
+        this.error = '위치 정보를 가져올 수 없습니다: ' + error.message;
+        console.error('Geolocation error:', error);
+      } finally {
+        this.loading = false;
       }
     },
 
-    // 키워드로 주변 검색
+    // 새로 추가하는 메소드
+    async searchByKeywordAndLocation() {
+      try {
+        const bounds = this.map.getBounds();
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+
+        const response = await axios.get('/api/v1/locations/banks/search/', {
+          params: {
+            keyword: this.searchKeyword,
+            sw_lat: sw.getLat(),
+            sw_lng: sw.getLng(),
+            ne_lat: ne.getLat(),
+            ne_lng: ne.getLng()
+          }
+        });
+
+        if (response.data.documents && response.data.documents.length > 0) {
+          this.banks = response.data.documents;
+          this.updateMap();
+          this.showResearchButton = false;
+          this.lastSearchKeyword = this.searchKeyword;
+        } else {
+          this.error = '현재 위치 주변에 검색 결과가 없습니다.';
+          this.banks = [];
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.error = '검색 중 오류가 발생했습니다.';
+        this.banks = [];
+      }
+    },
     async searchNearbyWithKeyword() {
       try {
         const response = await axios.get('/api/v1/locations/banks/search/', {
@@ -189,10 +219,9 @@ export default {
             keyword: this.searchKeyword,
             latitude: this.currentLocation.latitude,
             longitude: this.currentLocation.longitude,
-            radius: 1000  // 1km 반경
+            radius: 1000
           }
         })
-        
         if (response.data.documents) {
           this.banks = response.data.documents
           this.updateMap()
@@ -206,19 +235,16 @@ export default {
         this.loading = false
       }
     },
-
-    // 일반 주변 검색
     async searchNearby() {
       try {
         const response = await axios.get('/api/v1/locations/banks/nearby/', {
           params: {
             latitude: this.currentLocation.latitude,
             longitude: this.currentLocation.longitude,
-            radius: 1000  // 1km 반경
+            radius: 1000
           }
         })
-
-        if (response.data.banks) {  // response.data.banks로 수정
+        if (response.data.banks) {
           this.banks = response.data.banks
           this.updateMap()
         } else {
@@ -231,49 +257,20 @@ export default {
         this.loading = false
       }
     },
-
-    // async searchNearby() {
-    //   try {
-    //     const response = await axios.get('/api/v1/locations/banks/nearby/', {
-    //       params: {
-    //         latitude: this.currentLocation.latitude,
-    //         longitude: this.currentLocation.longitude,
-    //         radius: 1000
-    //       }
-    //     })
-        
-    //     // response.data.banks로 수정
-    //     if (response.data.banks && response.data.banks.length > 0) {
-    //       this.banks = response.data.banks
-    //       this.updateMap()
-    //     } else {
-    //       this.error = '주변에 은행이 없습니다.'
-    //     }
-    //   } catch (error) {
-    //     console.error('Error:', error)
-    //     this.error = '은행 검색 중 오류가 발생했습니다.'
-    //   } finally {
-    //     this.loading = false
-    //   }
-    // },
-
     async searchByKeyword() {
       if (!this.searchKeyword.trim()) {
         this.error = '검색어를 입력해주세요.'
         return
       }
-
       this.loading = true
       this.error = null
       this.lastSearchKeyword = this.searchKeyword
-
       try {
         const response = await axios.get('/api/v1/locations/banks/search/', {
-          params: { 
-            keyword: this.searchKeyword 
+          params: {
+            keyword: this.searchKeyword
           }
         })
-        
         if (response.data.documents) {
           this.banks = response.data.documents
           this.updateMap()
@@ -288,23 +285,33 @@ export default {
         this.loading = false
       }
     },
-
-    // async searchNearbyWithKeyword() {
+    async handleResearch() {
+      // if (!this.lastSearchKeyword || this.loading) return
+      if (this.loading) return
+      
+      const bounds = this.map.getBounds()
+      const sw = bounds.getSouthWest()
+      const ne = bounds.getNorthEast()
+      
+      this.loading = true
+      this.error = null
+      
     //   try {
     //     const response = await axios.get('/api/v1/locations/banks/search/', {
     //       params: {
-    //         keyword: this.searchKeyword,
-    //         latitude: this.currentLocation.latitude,
-    //         longitude: this.currentLocation.longitude,
-    //         radius: 1000
+    //         keyword: this.lastSearchKeyword,
+    //         sw_lat: sw.getLat(),
+    //         sw_lng: sw.getLng(),
+    //         ne_lat: ne.getLat(),
+    //         ne_lng: ne.getLng()
     //       }
     //     })
-        
-    //     if (response.data.documents && response.data.documents.length > 0) {
+    //     if (response.data.documents) {
     //       this.banks = response.data.documents
-    //       this.updateMap()
+    //       this.updateMarkersOnly()
+    //       this.showResearchButton = false
     //     } else {
-    //       this.error = '주변에 검색 결과가 없습니다.'
+    //       this.error = '검색 결과가 없습니다.'
     //     }
     //   } catch (error) {
     //     console.error('Error:', error)
@@ -313,28 +320,41 @@ export default {
     //     this.loading = false
     //   }
     // },
-
-    async handleResearch() {
-      const center = this.map.getCenter()
-      this.loading = true
-      this.error = null
-
-      try {
-        const response = await axios.get('/api/v1/locations/banks/search/', {
-          params: {
-            keyword: this.lastSearchKeyword,
-            latitude: center.getLat(),
-            longitude: center.getLng(),
-            radius: 5000
+    try {
+        // 키워드가 있으면 키워드 검색, 없으면 주변 검색
+        if (this.lastSearchKeyword) {
+          const response = await axios.get('/api/v1/locations/banks/search/', {
+            params: {
+              keyword: this.lastSearchKeyword,
+              sw_lat: sw.getLat(),
+              sw_lng: sw.getLng(),
+              ne_lat: ne.getLat(),
+              ne_lng: ne.getLng()
+            }
+          })
+          if (response.data.documents) {
+            this.banks = response.data.documents
+            this.updateMarkersOnly()
+            this.showResearchButton = false
+          } else {
+            this.error = '검색 결과가 없습니다.'
           }
-        })
-        
-        if (response.data.documents) {
-          this.banks = response.data.documents
-          this.updateMarkersOnly()
-          this.showResearchButton = false
         } else {
-          this.error = '검색 결과가 없습니다.'
+          // 주변 검색 API 호출
+          const response = await axios.get('/api/v1/locations/banks/nearby/', {
+            params: {
+              latitude: this.map.getCenter().getLat(),
+              longitude: this.map.getCenter().getLng(),
+              radius: 1000
+            }
+          })
+          if (response.data.banks) {
+            this.banks = response.data.banks
+            this.updateMarkersOnly()
+            this.showResearchButton = false
+          } else {
+            this.error = '주변에 은행이 없습니다.'
+          }
         }
       } catch (error) {
         console.error('Error:', error)
@@ -343,69 +363,45 @@ export default {
         this.loading = false
       }
     },
-
     updateMap() {
       if (!this.map || !this.banks.length) return
-
       this.clearMarkers()
       const bounds = new kakao.maps.LatLngBounds()
-
       this.banks.forEach(bank => {
         const position = new kakao.maps.LatLng(bank.y, bank.x)
         const marker = this.createMarker(position, bank)
         bounds.extend(position)
       })
-
       this.map.setBounds(bounds)
     },
-
     updateMarkersOnly() {
       if (!this.map || !this.banks.length) return
       this.clearMarkers()
-
       this.banks.forEach(bank => {
         const position = new kakao.maps.LatLng(bank.y, bank.x)
         this.createMarker(position, bank)
       })
     },
-
     clearMarkers() {
       this.markers.forEach(marker => marker.setMap(null))
       this.markers = []
     },
-
     createMarker(position, bank) {
       const marker = new kakao.maps.Marker({ position })
       marker.setMap(this.map)
       this.markers.push(marker)
-
       const infowindow = new kakao.maps.InfoWindow({
         content: `
           <div style="padding:10px;width:250px;font-size:12px;">
             <h4 style="margin:0 0 5px;font-size:14px;color:#333;">${bank.place_name}</h4>
-            ${bank.phone ? 
-              `<p style="margin:5px 0;color:#666;">
-                <span style="color:#2196F3;">☎</span> ${bank.phone}
-              </p>` : ''
-            }
-            <p style="margin:5px 0;color:#666;">
-              <span style="color:#4CAF50;">📍</span> ${bank.address_name}
-            </p>
-            ${bank.road_address_name ? 
-              `<p style="margin:5px 0;color:#888;font-size:11px;">
-                (도로명: ${bank.road_address_name})
-              </p>` : ''
-            }
-            ${bank.distance ? 
-              `<p style="margin:5px 0;color:#666;">
-                <span style="color:#FF9800;">🚶</span> ${(bank.distance / 1000).toFixed(1)}km
-              </p>` : ''
-            }
+            ${bank.phone ? `<p style="margin:5px 0;color:#666;"><span style="color:#2196F3;">☎</span> ${bank.phone}</p>` : ''}
+            <p style="margin:5px 0;color:#666;"><span style="color:#4CAF50;">📍</span> ${bank.address_name}</p>
+            ${bank.road_address_name ? `<p style="margin:5px 0;color:#888;font-size:11px;">(도로명: ${bank.road_address_name})</p>` : ''}
+            ${bank.distance ? `<p style="margin:5px 0;color:#666;"><span style="color:#FF9800;">🚶</span> ${(bank.distance / 1000).toFixed(1)}km</p>` : ''}
           </div>
-        `
-        , removable: true  // 닫기 버튼 표시
+        `,
+        removable: true
       })
-
       kakao.maps.event.addListener(marker, 'click', () => {
         infowindow.open(this.map, marker)
       })
