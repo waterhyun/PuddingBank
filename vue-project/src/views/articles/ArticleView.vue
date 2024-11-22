@@ -126,6 +126,11 @@ const toggleMyArticles = () => {
   showMyArticles.value = !showMyArticles.value;
 };
 
+// 카테고리 선택 함수
+const selectCategory = (category) => {
+  currentCategory.value = category
+}
+
 // 로그인 페이지로 리다이렉트
 const redirectToLogin = () => {
   alert('로그인이 필요한 서비스입니다.')
