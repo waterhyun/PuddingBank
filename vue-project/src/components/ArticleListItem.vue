@@ -7,8 +7,15 @@
       }"
       class="article-link"
     >
+      <!-- 카테고리 표시 -->
+      <div class="article-category">
+        {{ article.category_display }}
+      </div>
+      <!-- 게시글 제목 및 정보 -->
       <h2 class="article-title">{{ article.id }}번 게시글</h2>
-      <p class="article-info"><strong>제목:</strong> {{ article.title }}</p>
+      <p class="article-info">
+        <strong>제목:</strong> {{ article.title }}
+      </p>
       <div class="article-stats">
         <span class="stat-item">
           <i class="fas fa-heart"></i>
@@ -29,7 +36,6 @@ defineProps({
   article: Object,
 });
 
-
 </script>
 
 <style scoped>
@@ -45,6 +51,13 @@ defineProps({
   transform: translateY(-5px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: #f9f9f9;
+}
+
+.article-category {
+  color: #007bff; /* 파란색으로 강조 */
+  font-weight: bold;
+  margin-bottom: 5px; /* 제목과 약간의 간격 추가 */
+  display: inline-block;
 }
 
 .article-link {
