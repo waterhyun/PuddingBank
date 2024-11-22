@@ -10,9 +10,17 @@ from .models import Article, Comment
 @permission_classes([IsAuthenticatedOrReadOnly])
 def article_list_create(request):
     if request.method == 'GET':
-        articles = Article.objects.all()
+        # 카테고리 필터링: query parameter로 category를 받음
+        category = request.query_params.get('category')
+        if category:
+            articles = Article.objects.filter(category=category)
+        else:
+            articles = Article.objects.all()
         serializers = ArticleListSerializer(articles, many=True)
         return Response(serializers.data)
+        # articles = Article.objects.all()
+        # serializers = ArticleListSerializer(articles, many=True)
+        # return Response(serializers.data)
     
     elif request.method == 'POST':
         # context에 request를 추가하여 serializer 생성

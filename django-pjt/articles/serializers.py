@@ -26,6 +26,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     comment_count = serializers.IntegerField(source='comments.count', read_only=True)
     like_count = serializers.IntegerField(source='like_users.count', read_only=True)
+    category_display = serializers.CharField(source='get_category_display', read_only=True)
 
     class Meta:
         model = Article
@@ -35,6 +36,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
             'username',
             'comment_count',
             'like_count',
+            'category_display',  # 카테고리
             'created_at'
         )
 
@@ -44,6 +46,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     like_users_count = serializers.IntegerField(source='like_users.count', read_only=True)
     is_liked = serializers.SerializerMethodField()
+    category_display = serializers.CharField(source='get_category_display', read_only=True)
 
     class Meta:
         model = Article
@@ -53,13 +56,15 @@ class ArticleSerializer(serializers.ModelSerializer):
             'username',
             'title',
             'content',
+            'category',  # 저장을 위한 필드 추가
+            'category_display',  # 사람이 읽을 수 있는 카테고리 이름 추가
             'comments',
             'like_users_count',
             'is_liked',
             'created_at',
             'updated_at',
         )
-        read_only_fields = ('user', 'like_users')
+        read_only_fields = ('user', 'like_users', 'category_display')
 
     def get_is_liked(self, obj):
         """현재 사용자의 좋아요 여부"""
