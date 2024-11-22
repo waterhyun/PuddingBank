@@ -10,6 +10,9 @@ import ProfileView from '@/views/auth/ProfileView.vue'
 import SignUpView from '@/views/auth/SignUpView.vue'
 import { useAuthStore } from '@/stores/auth'
 import ProductsView from '@/views/products/ProductsView.vue'
+// MBTI 관련 컴포넌트 import
+import LoanMBTIResultView from '@/views/products/LoanMBTIResultView.vue'
+import LoanMBTITestView from '@/views/products/LoanMBTITestView.vue'
 import ProductDetail from '@/views/products/ProductDetail.vue'
 
 const router = createRouter({
@@ -70,6 +73,18 @@ const router = createRouter({
       component: ProductsView
     },
     {
+      path: '/loan-test',
+      name: 'LoanMBTITest',
+      component: LoanMBTITestView
+    },
+    {
+      path: '/loan-result',
+      name: 'LoanMBTIResult',
+      component: LoanMBTIResultView,
+      props: true,  // MBTI 결과와 추천 상품 데이터를 props로 전달
+      meta: { requiresTestComplete: true }  // MBTI 검사 완료 필요
+    },
+    {
       path: "/products/:type/:id", // 예금/적금을 구분하기 위한 type
       name: "ProductDetail",
       component: ProductDetail,
@@ -115,5 +130,14 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+// MBTI 검사 완료 여부 확인을 위한 네비게이션 가드 추가
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresTestComplete && !from.name === 'LoanMBTITest') {
+    // MBTI 검사를 거치지 않고 결과 페이지로 직접 접근하는 경우
+    next({ name: 'LoanMBTITest' })
+  } else {
+    next()
+  }
+})
 
 export default router
