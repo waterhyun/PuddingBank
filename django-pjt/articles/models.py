@@ -3,6 +3,13 @@ from django.conf import settings
 
 class Article(models.Model):
     """게시글 모델"""
+    CATEGORY_CHOICES = [
+        ('NOTICE', '공지'),  
+        ('FREE', '자유'),   
+        ('QUESTION', '질문'),  
+        ('RECOMMEND', '추천'), 
+    ] 
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -10,6 +17,11 @@ class Article(models.Model):
     )
     title = models.CharField(max_length=100)
     content = models.TextField()
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default='FREE'  # 기본값 설정 (자유)
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     like_users = models.ManyToManyField(
@@ -23,7 +35,7 @@ class Article(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return self.title
+        return f"{self.title} ({self.get_category_display()})"
 
 class Comment(models.Model):
     """댓글 모델"""
