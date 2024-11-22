@@ -13,6 +13,7 @@ import ProductsView from '@/views/products/ProductsView.vue'
 // MBTI 관련 컴포넌트 import
 import LoanMBTIResultView from '@/views/products/LoanMBTIResultView.vue'
 import LoanMBTITestView from '@/views/products/LoanMBTITestView.vue'
+import ProductDetail from '@/views/products/ProductDetail.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,7 +39,7 @@ const router = createRouter({
       component: ArticleDetailView,
       props: true
     },
-    {
+    { // 은행 찾기 페이지
       path: '/banks',
       name: 'BankSearch',
       component: BankSearchView
@@ -48,25 +49,25 @@ const router = createRouter({
       name: 'exchanges',
       component: ExchangesView,
     },
-    {
+    { // 로그인 페이지
       path: '/login',
       name: 'Login',
       component: () => import('@/views/auth/LoginView.vue'),
       meta: { requiresGuest: true }
     },
-    {
+    { // 회원가입 페이지
       path: '/signup',
       name: 'SignUp',
       component: () => import('@/views/auth/SignUpView.vue'),
       meta: { requiresGuest: true }
     },
-    {
+    { // 마이페이지
       path: '/profile',
       name: 'Profile',
       component: () => import('@/views/auth/ProfileView.vue'),
       meta: { requiresAuth: true }  // beforeEnter 대신 meta 사용
     },
-    {
+    { // 예적금 비교 페이지
       path: '/products',
       name: 'Products',
       component: ProductsView
@@ -83,6 +84,11 @@ const router = createRouter({
       props: true,  // MBTI 결과와 추천 상품 데이터를 props로 전달
       meta: { requiresTestComplete: true }  // MBTI 검사 완료 필요
     }
+      path: "/products/:type/:id", // 예금/적금을 구분하기 위한 type
+      name: "ProductDetail",
+      component: ProductDetail,
+      props: true,
+    },
   ] 
 })
 

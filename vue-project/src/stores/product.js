@@ -3,34 +3,65 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 
-export const useArticleStore = defineStore('article', () => {
-  const articles = ref([])
-  const article = ref([])
+export const useProductStore = defineStore('product', () => {
+  const depositproducts = ref([])
+  const depositproduct = ref([])
+  const savingproducts = ref([])
+  const savingproduct = ref([])
   const router = useRouter()
 
-  // 전체 게시글 조회
-  const getArticles = function () {
+  // 전체 예금 상품 조회
+  const getDepositProducts = function () {
     axios({
       method: 'get',
-      url: 'http://127.0.0.1:8000/api/v1/articles/'
+      url: 'http://127.0.0.1:8000/api/v1/products/deposits/'
+    })
+    .then(res => {
+      console.log(res.data)
+      depositproducts.value = res.data
+    })
+    .catch((err) => {
+      console.error('API 요청 실패:', err); // 오류 메시지 출력
+    });
+  }
+
+  // 단일 예금 상품 조회
+  const getDepositProduct = function(product_id) {
+    axios({
+      method: 'get',
+      url: `http://127.0.0.1:8000/api/v1/products/deposits/${product_id}/`,
+    }).then(res => {
+      depositproduct.value = res.data;
+    })
+  }
+
+  // 전체 적금 상품 조회
+  const getSavingProducts = function () {
+    axios({
+      method: 'get',
+      url: 'http://127.0.0.1:8000/api/v1/products/savings/'
     })
     .then(res => {
       // console.log(res.data)
-      articles.value = res.data
+      savingproducts.value = res.data
     })
+    .catch((err) => {
+      console.error('API 요청 실패:', err); // 오류 메시지 출력
+    });
   }
 
-  // 단일 게시글 + 댓글 조회
-  const getArticle = function(article_id) {
+  // 단일 적금 상품 조회
+  const getSavingProduct = function(product_id) {
     axios({
       method: 'get',
-      url: `http://127.0.0.1:8000/api/v1/articles/${article_id}/`,
+      url: `http://127.0.0.1:8000/api/v1/products/savings/${product_id}/`,
     }).then(res => {
-      article.value = res.data;
-      comments.value = res.data.comments;
+      savingproduct.value = res.data;
     })
   }
 
 
-  return { articles, article, getArticles, getArticle }
+  return { depositproducts, depositproduct, getDepositProducts, getDepositProduct,
+           savingproducts, savingproduct, getSavingProducts, getSavingProduct
+   }
 })
