@@ -1,28 +1,53 @@
 <template>
   <div class="profile-container">
     <h2>마이 프로필</h2>
-    
+      
     <!-- 프로필 보기 모드 -->
     <div v-if="!isEditing" class="profile-info">
-      <div class="info-group">
-        <label>아이디</label>
-        <p>{{ user?.username }}</p>
+      <div class="profile-row">
+        <strong>아이디:</strong>
+        <span>{{ user.id }}</span>
       </div>
-      <div class="info-group">
-        <label>이름</label>
-        <p>{{ user?.name }}</p>
+      <div class="profile-row">
+        <strong>이름:</strong>
+        <span>{{ user.name }}</span>
       </div>
-      <div class="info-group">
-        <label>이메일</label>
-        <p>{{ user?.email }}</p>
+      <div class="profile-row">
+        <strong>이메일:</strong>
+        <span>{{ user.email }}</span>
       </div>
-      <div class="info-group">
-        <label>생년월일</label>
-        <p>{{ formatDate(user?.birthdate) }}</p>
+      <div class="profile-row">
+        <strong>생년월일:</strong>
+        <span>{{ user.birth_date }}</span>
       </div>
-      <div class="info-group">
-        <label>전화번호</label>
-        <p>{{ user?.phone || '미등록' }}</p>
+      <div class="profile-row">
+        <strong>전화번호:</strong>
+        <span>{{ user.phone || "미등록" }}</span>
+      </div>
+      <div>
+        <label>나의 위시 리스트</label>
+          <div v-if="userWishList">
+            <div class="wishlist-container">
+              <table class="wishlist-table">
+                <thead>
+                  <tr>
+                    <th>번호</th>
+                    <th>상품명</th>
+                    <th>은행명</th>
+                    <th>유형</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in userWishList" :key="item.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.bank }}</td>
+                    <td>{{ item.type === 'saving' ? '적금' : '예금' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
       </div>
       
       <div class="button-group">
@@ -129,7 +154,8 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
-
+import axios from 'axios';
+const userWishList = ref([])
 const authStore = useAuthStore()
 const { user } = storeToRefs(authStore)
 const isEditing = ref(false)
@@ -221,7 +247,21 @@ const formatDate = (date) => {
   if (!date) return ''
   return new Date(date).toLocaleDateString()
 }
-
+const get_wish = function () {
+  axios({
+    method: 'get',
+    url: 'http://127.0.0.1:8000/api/v1/products/wishlist/',
+    headers: {
+      Authorization: `Token ${authStore.token}`
+    }
+  })
+    .then((res) => {
+      userWishList.value = res.data
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
 // 컴포넌트 마운트 시 사용자 정보 가져오기
 onMounted(async () => {
   if (!user.value) {
@@ -231,6 +271,7 @@ onMounted(async () => {
       console.error('Failed to fetch user details:', error)
     }
   }
+  get_wish()
 })
 </script>
 
@@ -310,4 +351,88 @@ button[type="button"] {
   background-color: #666;
   color: white;
 }
+h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: bold; /* 제목 강조 */
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd; /* 제목 아래 구분선 추가 */
+  padding-bottom: 10px;
+}
+
+.wishlist-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px; /* 테이블 모서리를 둥글게 */
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+
+.wishlist-table th {
+  background-color: #0046b3; /* 헤더 배경색 */
+  color: #fff; /* 헤더 글씨 색 */
+  padding: 15px; /* 헤더 패딩 조정 */
+  text-align: center;
+  font-size: 1rem; /* 헤더 글씨 크기 */
+}
+
+.wishlist-table td {
+  padding: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555; /* 본문 글씨 색상 */
+  border-bottom: 1px solid #ddd; /* 행 구분선 */
+}
+
+.wishlist-table tbody tr:hover {
+  background-color: #f9f9f9; /* 행 호버 효과 */
+}
+
+.wishlist-table tbody tr:nth-child(even) {
+  background-color: #f8f8f8; /* 짝수 행 배경색 */
+}
+.profile-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.profile-container h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #0046b3;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.profile-container .profile-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.profile-container .profile-row:last-child {
+  border-bottom: none;
+}
+
+.profile-container .profile-row strong {
+  font-size: 1rem;
+  color: #333;
+}
+
+.profile-container .profile-row span {
+  font-size: 1rem;
+  color: #555;
+}
+
+
 </style>
