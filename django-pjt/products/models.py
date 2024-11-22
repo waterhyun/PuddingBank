@@ -77,9 +77,11 @@ class UserProduct(models.Model):
         ('CANCELED', '해지')
     ]
     PRODUCT_CHOICES = [
-        ('DEPOSIT', '정기예금'),
-        ('RENT_LOAN', '전세자금대출')
-    ]
+    ('DEPOSIT', '정기예금'),
+    ('RENT_LOAN', '전세자금대출'),
+    ('MORTGAGE', '주택담보대출'),
+    ('LEASE', '전세자금대출')
+    ]   
 
     user = models.ForeignKey(
         'accounts.User',
@@ -104,3 +106,67 @@ class UserProduct(models.Model):
 
     class Meta:
         db_table = 'user_products'
+
+        
+
+class MortgageLoan(models.Model):
+    """주택담보대출 상품 정보"""
+    product = models.OneToOneField(
+        BaseProduct,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    mrtg_type = models.CharField(max_length=100)  # 담보유형 코드
+    mrtg_type_nm = models.CharField(max_length=100)  # 담보유형명
+    rpay_type = models.CharField(max_length=100)  # 대출상환유형 코드
+    rpay_type_nm = models.CharField(max_length=100)  # 대출상환유형명
+    lend_rate_type = models.CharField(max_length=100)  # 대출금리유형 코드
+    lend_rate_type_nm = models.CharField(max_length=100)  # 대출금리유형명
+    lend_rate_min = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        validators=[MinValueValidator(0)]
+    )  # 대출금리_최저
+    lend_rate_max = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        validators=[MinValueValidator(0)]
+    )  # 대출금리_최고
+    lend_rate_avg = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        validators=[MinValueValidator(0)]
+    )  # 전월 취급 평균금리
+
+    class Meta:
+        db_table = 'mortgage_loans'
+
+class LeaseLoan(models.Model):
+    """전세자금대출 상품 정보"""
+    product = models.OneToOneField(
+        BaseProduct,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    rpay_type = models.CharField(max_length=100)  # 대출상환유형 코드
+    rpay_type_nm = models.CharField(max_length=100)  # 대출상환유형명
+    lend_rate_type = models.CharField(max_length=100)  # 대출금리유형 코드
+    lend_rate_type_nm = models.CharField(max_length=100)  # 대출금리유형명
+    lend_rate_min = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        validators=[MinValueValidator(0)]
+    )  # 대출금리_최저
+    lend_rate_max = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        validators=[MinValueValidator(0)]
+    )  # 대출금리_최고
+    lend_rate_avg = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        validators=[MinValueValidator(0)]
+    )  # 전월 취급 평균금리
+
+    class Meta:
+        db_table = 'lease_loans'
