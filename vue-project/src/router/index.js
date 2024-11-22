@@ -83,7 +83,8 @@ const router = createRouter({
       component: LoanMBTIResultView,
       props: true,  // MBTI 결과와 추천 상품 데이터를 props로 전달
       meta: { requiresTestComplete: true }  // MBTI 검사 완료 필요
-    }
+    },
+    {
       path: "/products/:type/:id", // 예금/적금을 구분하기 위한 type
       name: "ProductDetail",
       component: ProductDetail,
