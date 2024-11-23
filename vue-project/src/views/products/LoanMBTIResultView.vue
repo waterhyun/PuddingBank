@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { useLoanStore } from '@/stores/loanStore'
+import { useLoanStore } from '@/stores/loan'
 import { storeToRefs } from 'pinia'
 
 export default {
@@ -119,3 +119,4 @@ li {
   margin: 8px 0;
 }
 </style>
+

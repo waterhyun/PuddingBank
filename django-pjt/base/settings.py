@@ -203,3 +203,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Django의 기본 사용자 모델을 커스텀 사용자 모델로 대체
 # 'accounts' 앱의 'User' 모델을 프로젝트의 사용자 모델로 지정
 AUTH_USER_MODEL = 'accounts.User'
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }

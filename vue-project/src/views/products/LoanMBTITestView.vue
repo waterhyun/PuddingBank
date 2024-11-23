@@ -75,7 +75,7 @@
 
 <script>
 import axios from 'axios'
-import { useLoanStore } from '@/stores/loanStore'
+import { useLoanStore } from '@/stores/loan'
 
 export default {
   name: 'LoanMBTITest',
