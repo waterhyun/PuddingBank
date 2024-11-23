@@ -1,78 +1,3 @@
-<!-- views/loans/LoanMBTITestView.vue -->
-<template>
-  <div class="mbti-test">
-    <!-- 진행 상태 표시 -->
-    <div class="progress-bar">
-      <div class="progress" :style="{ width: `${(currentStep/totalSteps)*100}%` }"></div>
-      <span>{{ currentStep }}/{{ totalSteps }}</span>
-    </div>
-
-    <!-- 질문 섹션 -->
-    <div v-if="!isCompleted" class="question-section">
-      <div class="questions-container">
-        <transition name="fade" mode="out-in">
-          <div :key="currentStep" class="question-group">
-            <template v-for="(question, index) in currentQuestions" :key="index">
-              <div class="question-item">
-                <h3>{{ question }}</h3>
-                <div class="answer-buttons">
-                  <button
-                    v-for="(label, value) in answerOptions"
-                    :key="value"
-                    :class="{ selected: isAnswerSelected(getCurrentQuestionId(index), value) }"
-                    @click="selectAnswer(getCurrentQuestionId(index), parseInt(value))"
-                  >
-                    {{ label }}
-                  </button>
-                </div>
-              </div>
-            </template>
-          </div>
-        </transition>
-      </div>
-
-      <!-- 네비게이션 버튼 -->
-      <div class="navigation-buttons">
-        <button 
-          class="nav-button prev" 
-          @click="previousStep" 
-          v-if="currentStep > 1"
-          :disabled="isLoading"
-        >
-          이전
-        </button>
-        <button 
-          class="nav-button next" 
-          @click="nextStep"
-          v-if="!isLastStep"
-          :disabled="!canProceed || isLoading"
-        >
-          다음
-        </button>
-        <button 
-          class="nav-button submit"
-          @click="submitTest"
-          v-if="isLastStep"
-          :disabled="!canProceed || isLoading"
-        >
-          결과 보기
-        </button>
-      </div>
-    </div>
-
-    <!-- 로딩 인디케이터 -->
-    <div v-if="isLoading" class="loading-overlay">
-      <div class="loading-spinner"></div>
-      <p>결과를 분석중입니다...</p>
-    </div>
-
-    <!-- 에러 메시지 -->
-    <div v-if="showError" class="error-message">
-      {{ errorMessage }}
-    </div>
-  </div>
-</template>
-
 <script>
 import axios from 'axios'
 import { useLoanStore } from '@/stores/loan'
@@ -255,88 +180,218 @@ export default {
 }
 </script>
 
+<template>
+  <div class="mbti-test">
+    <!-- 진행 상태 표시 -->
+    <div class="progress-container">
+      <h2 class="test-title">나의 대출 디저트 찾기</h2>
+      <div class="progress-bar">
+        <div class="progress" :style="{ width: `${(currentStep/totalSteps)*100}%` }"></div>
+        <span class="step-counter">{{ currentStep }}/{{ totalSteps }}</span>
+      </div>
+    </div>
+
+    <!-- 질문 섹션 -->
+    <div v-if="!isCompleted" class="question-section">
+      <div class="questions-container">
+        <transition name="fade" mode="out-in">
+          <div :key="currentStep" class="question-group">
+            <template v-for="(question, index) in currentQuestions" :key="index">
+              <div class="question-item">
+                <h3 class="question-text">{{ question }}</h3>
+                <div class="answer-buttons">
+                  <button 
+                    v-for="(label, value) in answerOptions" 
+                    :key="value"
+                    :class="{ 
+                      selected: isAnswerSelected(getCurrentQuestionId(index), value),
+                      'answer-button': true
+                    }"
+                    @click="selectAnswer(getCurrentQuestionId(index), parseInt(value))"
+                  >
+                    {{ label }}
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </transition>
+      </div>
+
+      <!-- 네비게이션 버튼 -->
+      <div class="navigation-buttons">
+        <button 
+          class="nav-button prev" 
+          @click="previousStep" 
+          v-if="currentStep > 1"
+          :disabled="isLoading"
+        >
+          이전
+        </button>
+        <button 
+          class="nav-button next" 
+          @click="nextStep" 
+          v-if="!isLastStep"
+          :disabled="!canProceed || isLoading"
+        >
+          다음
+        </button>
+        <button 
+          class="nav-button submit" 
+          @click="submitTest" 
+          v-if="isLastStep"
+          :disabled="!canProceed || isLoading"
+        >
+          결과 보기
+        </button>
+      </div>
+    </div>
+
+    <!-- 로딩 인디케이터 -->
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <p>맛있는 디저트를 준비중입니다...</p>
+      </div>
+    </div>
+
+    <!-- 에러 메시지 -->
+    <div v-if="showError" class="error-message">
+      {{ errorMessage }}
+    </div>
+  </div>
+</template>
+
 <style scoped>
 .mbti-test {
   max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(212, 84, 125, 0.1);
+}
+
+.test-title {
+  text-align: center;
+  color: #d4547d;
+  font-size: 2.2em;
+  margin-bottom: 30px;
+  font-weight: 700;
+}
+
+.progress-container {
+  margin-bottom: 40px;
 }
 
 .progress-bar {
   position: relative;
-  height: 10px;
-  background: #eee;
-  border-radius: 5px;
-  margin-bottom: 30px;
+  height: 12px;
+  background: #ffe5ec;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .progress {
   position: absolute;
   height: 100%;
-  background: #4CAF50;
-  border-radius: 5px;
-  transition: width 0.3s ease;
+  background: linear-gradient(45deg, #d4547d, #ff8fab);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.step-counter {
+  display: block;
+  text-align: center;
+  color: #d4547d;
+  margin-top: 10px;
+  font-weight: 600;
 }
 
 .question-section {
   background: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-radius: 15px;
+  padding: 30px;
 }
 
 .question-item {
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+}
+
+.question-text {
+  color: #333;
+  font-size: 1.3em;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .answer-buttons {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 15px;
+  gap: 15px;
+  margin-top: 20px;
 }
 
-.answer-buttons button {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.answer-button {
+  padding: 15px 20px;
+  border: 2px solid #ffe5ec;
+  border-radius: 12px;
   background: #fff;
+  color: #666;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  font-size: 1em;
 }
 
-.answer-buttons button.selected {
-  background: #4CAF50;
+.answer-button:hover {
+  background: #ffe5ec;
+  color: #d4547d;
+}
+
+.answer-button.selected {
+  background: #d4547d;
   color: white;
-  border-color: #4CAF50;
+  border-color: #d4547d;
 }
 
 .navigation-buttons {
   display: flex;
-  justify-content: space-between;
-  margin-top: 30px;
+  justify-content: flex-end;
+  margin-top: 40px;
+  position: relative;
+  gap: 20px;
 }
 
 .nav-button {
-  padding: 12px 24px;
+  padding: 12px 30px;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   cursor: pointer;
   font-weight: bold;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.prev {
+  background: #ffe5ec;
+  color: #d4547d;
+  position: absolute;
+  left: 0;
+}
+
+.next, .submit {
+  background: #d4547d;
+  color: white;
+}
+
+.nav-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 84, 125, 0.2);
 }
 
 .nav-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.error-message {
-  color: #f44336;
-  margin-top: 10px;
-  padding: 10px;
-  background: #ffebee;
-  border-radius: 4px;
 }
 
 .loading-overlay {
@@ -347,19 +402,32 @@ export default {
   bottom: 0;
   background: rgba(255,255,255,0.9);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
 
+.loading-content {
+  text-align: center;
+}
+
 .loading-spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #4CAF50;
+  border: 4px solid #ffe5ec;
+  border-top: 4px solid #d4547d;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+.error-message {
+  color: #d4547d;
+  margin-top: 20px;
+  padding: 15px;
+  background: #ffe5ec;
+  border-radius: 8px;
+  text-align: center;
 }
 
 @keyframes spin {
@@ -367,11 +435,26 @@ export default {
   100% { transform: rotate(360deg); }
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s;
+.fade-enter-active, 
+.fade-leave-active {
+  transition: opacity 0.3s ease;
 }
 
-.fade-enter, .fade-leave-to {
+.fade-enter-from, 
+.fade-leave-to {
   opacity: 0;
 }
+
+@media (max-width: 768px) {
+  .answer-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .mbti-test {
+    padding: 20px;
+    margin: 20px;
+  }
+}
 </style>
+
+

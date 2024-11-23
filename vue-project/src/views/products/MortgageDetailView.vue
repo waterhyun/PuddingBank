@@ -117,7 +117,8 @@ const getMortgageTypeLabel = (type) => {
   const types = {
     'A': '아파트',
     'B': '주택',
-    'C': '오피스텔'
+    'C': '오피스텔',
+    'E': '아파트외'
   }
   return types[type] || type
 }
