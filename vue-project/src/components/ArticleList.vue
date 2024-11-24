@@ -1,12 +1,12 @@
 <template>
   <div>
-    <h3>Article List</h3>
+
+    <!-- Article 데이터를 반복 렌더링 -->
     <ArticleListItem 
-    v-for="article in store.articles"
-    :key="article.id"
-    :article="article"
+      v-for="article in articles"
+      :key="article.id"
+      :article="article"
     />
-    
   </div>
 </template>
 
@@ -14,7 +14,13 @@
 // import { onMounted } from 'vue';
 import { useArticleStore } from '@/stores/article'
 import ArticleListItem from './ArticleListItem.vue';
-const store = useArticleStore()
+defineProps({
+  articles: {
+    type: Array,
+    required: true
+  }
+})
+// const store = useArticleStore()
 // onMounted(() => {
 //   store.getArticles()
 // })

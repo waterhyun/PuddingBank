@@ -6,6 +6,7 @@
         "user": 3,
         "title": "TEST 1 TITLE",
         "content": "Affect media sister offer itself.\nAdd teacher debate exactly. Nature difficult whether stand short glass son raise. Visit environment anything approach develop.",
+        "category": "FREE",
         "created_at": "2022-04-21T12:32:10.905Z",
         "updated_at": "2022-04-21T12:32:10.905Z",
         "like_users": []
@@ -18,6 +19,7 @@
         "user": 5,
         "title": "TEST 2 TITLE",
         "content": "Idea hit wonder. Mr space follow.\nIndeed half skin sense possible together impact. Live bed break reflect pressure.",
+        "category": "FREE",
         "created_at": "2022-04-21T12:32:10.977Z",
         "updated_at": "2022-04-21T12:32:10.977Z",
         "like_users": []
@@ -30,6 +32,7 @@
         "user": 4,
         "title": "TEST 3 TITLE",
         "content": "Conference represent light cover hear eight I. Subject six style stay rate ability marriage.",
+        "category": "FREE",
         "created_at": "2022-04-21T12:32:11.050Z",
         "updated_at": "2022-04-21T12:32:11.050Z",
         "like_users": []
@@ -42,6 +45,7 @@
         "user": 2,
         "title": "TEST 4 TITLE",
         "content": "Able live form. Young understand family listen though.\nPresent among born identify fast me up. Money at center here reduce media.",
+        "category": "FREE",
         "created_at": "2022-04-21T12:32:11.122Z",
         "updated_at": "2022-04-21T12:32:11.122Z",
         "like_users": []
@@ -54,6 +58,7 @@
         "user": 1,
         "title": "TEST 5 TITLE",
         "content": "Health news that medical job late program. Staff recently product second cultural. Peace put if mind seven key own.\nWife way listen store tree herself company.",
+        "category": "FREE",
         "created_at": "2022-04-21T12:32:11.195Z",
         "updated_at": "2022-04-21T12:32:11.195Z",
         "like_users": []
@@ -66,6 +71,7 @@
         "user": 2,
         "title": "TEST 6 TITLE",
         "content": "Read represent source want art century quite. Say buy owner research.\nOffer goal religious. Table audience chance exactly cultural. Under budget individual open. Run sister high huge view.",
+        "category": "FREE",
         "created_at": "2022-04-21T12:32:11.267Z",
         "updated_at": "2022-04-21T12:32:11.267Z",
         "like_users": []
@@ -78,6 +84,7 @@
         "user": 5,
         "title": "TEST 7 TITLE",
         "content": "Newspaper position establish establish later team drop enter. Fly wish benefit middle Congress interest final entire.",
+        "category": "FREE",
         "created_at": "2022-04-21T12:32:11.338Z",
         "updated_at": "2022-04-21T12:32:11.338Z",
         "like_users": []
@@ -90,6 +97,7 @@
         "user": 1,
         "title": "TEST 8 TITLE",
         "content": "Them pay control on sort. Whether tree sister door prove unit. Success business treat beat find place.\nMaybe number notice. Defense important appear field far.",
+        "category": "FREE",
         "created_at": "2022-04-21T12:32:11.410Z",
         "updated_at": "2022-04-21T12:32:11.410Z",
         "like_users": []
@@ -102,6 +110,7 @@
         "user": 1,
         "title": "TEST 9 TITLE",
         "content": "Kind sometimes open right section will heart. Tend four its big guy threat.\nLaugh write five politics. Seem letter tax anything north face wait.",
+        "category": "FREE",
         "created_at": "2022-04-21T12:32:11.482Z",
         "updated_at": "2022-04-21T12:32:11.482Z",
         "like_users": []
@@ -114,8 +123,48 @@
         "user": 5,
         "title": "TEST 10 TITLE",
         "content": "Right social college dinner education short practice news. Pass finish method party.",
+        "category": "FREE",
         "created_at": "2022-04-21T12:32:11.553Z",
         "updated_at": "2022-04-21T12:32:11.553Z",
+        "like_users": []
+    }
+},
+{
+    "model": "articles.article",
+    "pk": 11,
+    "fields": {
+        "user": 2,
+        "title": "공지1",
+        "content": "공지사항입니다.",
+        "category": "NOTICE",
+        "created_at": "2022-11-21T12:32:11.553Z",
+        "updated_at": null,
+        "like_users": []
+    }
+},
+{
+    "model": "articles.article",
+    "pk": 12,
+    "fields": {
+        "user": 5,
+        "title": "질문1",
+        "content": "질문드립니다.",
+        "category": "QUESTION",
+        "created_at": "2023-11-21T12:32:11.553Z",
+        "updated_at": null,
+        "like_users": []
+    }
+},
+{
+    "model": "articles.article",
+    "pk": 13,
+    "fields": {
+        "user": 3,
+        "title": "추천1",
+        "content": "대출상품 추천드려요.",
+        "category": "RECOMMEND",
+        "created_at": "2024-11-21T12:32:11.553Z",
+        "updated_at": null,
         "like_users": []
     }
 }
