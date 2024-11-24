@@ -6,7 +6,7 @@
     <div v-if="!isEditing" class="profile-info">
       <div class="profile-row">
         <strong>아이디:</strong>
-        <span>{{ user.id }}</span>
+        <span>{{ user.username }}</span>
       </div>
       <div class="profile-row">
         <strong>이름:</strong>
@@ -18,7 +18,7 @@
       </div>
       <div class="profile-row">
         <strong>생년월일:</strong>
-        <span>{{ user.birth_date }}</span>
+        <span>{{ user.birthdate }}</span>
       </div>
       <div class="profile-row">
         <strong>전화번호:</strong>
