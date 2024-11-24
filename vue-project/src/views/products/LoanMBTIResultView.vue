@@ -9,9 +9,10 @@
         <div class="dessert-info">
           <h3 class="mbti-type">{{ mbtiResult.mbti_type }}</h3>
           <div class="dessert-image-container">
-            <!-- <img :src="getDessertImage(mbtiResult.mbti_type)" 
-                 :alt="getDessertName(mbtiResult.mbti_type)"
-                 class="dessert-image"> -->
+            <img :src="getDessertImage(mbtiResult?.mbti_type)" 
+                 :alt="getDessertName(mbtiResult?.mbti_type)"
+                 class="dessert-image"
+                 @error="handleImageError">
           </div>
           <p class="dessert-name">{{ getDessertName(mbtiResult.mbti_type) }}</p>
           <p class="dessert-description">{{ getDessertDescription(mbtiResult.mbti_type) }}</p>
@@ -121,32 +122,39 @@ const getMbtiLetters = (type) => {
   }))
 }
 
+const handleImageError = (e) => {
+  e.target.src = '/images/desserts/default.jpg'
+}
+
 const mbtiLetters = computed(() => 
   getMbtiLetters(mbtiResult.value.mbti_type)
 )
 
 
-// const getDessertImage = (type) => {
-//   const dessertImages = {
-//     'LFSP': '/images/desserts/cupcake.jpg',
-//     'LFTG': '/images/desserts/castella.jpg',
-//     'MFPA': '/images/desserts/tiramisu.jpg',
-//     'MFPH': '/images/desserts/millefeuille.jpg',
-//     'MFDA': '/images/desserts/brownie.jpg',
-//     'MFDH': '/images/desserts/poundcake.jpg',
-//     'MVPA': '/images/desserts/pudding.jpg',
-//     'MVPH': '/images/desserts/cream_puff.jpg',
-//     'MVDA': '/images/desserts/mousse_cake.jpg',
-//     'MVDH': '/images/desserts/eclair.jpg',
-//     'LFTP': '/images/desserts/rollcake.jpg',
-//     'LFSG': '/images/desserts/macaroon.jpg',
-//     'LVTG': '/images/desserts/jelly.jpg',
-//     'LVTP': '/images/desserts/croissant.jpg',
-//     'LVSG': '/images/desserts/doughnut.jpg',
-//     'LVSP': '/images/desserts/tart.jpg'
-//   }
-//   return dessertImages[type] || '/images/desserts/default.jpg'
-// }
+// mbtiResult가 undefined일 경우를 대비한 안전장치 추가
+const getDessertImage = (type) => {
+  if (!type) return '/images/desserts/default.jpg'
+  const dessertImages = {
+    'LFSP': '/images/desserts/cupcake.jpeg',
+    'LFTG': '/images/desserts/castella.jpeg',
+    'MFPA': '/images/desserts/tiramisu.png',
+    'MFPH': '/images/desserts/millefeuille.jpeg',
+    'MFDA': '/images/desserts/brownie.jpeg',
+    'MFDH': '/images/desserts/poundcake.jpeg',
+    'MVPA': '/images/desserts/pudding.jpeg',
+    'MVPH': '/images/desserts/cream_puff.jpeg',
+    'MVDA': '/images/desserts/mousse_cake.jpeg',
+    'MVDH': '/images/desserts/eclair.jpeg',
+    'LFTP': '/images/desserts/rollcake.jpeg',
+    'LFSG': '/images/desserts/macaroon.jpeg',
+    'LVTG': '/images/desserts/jelly.jpeg',
+    'LVTP': '/images/desserts/croissant.jpeg',
+    'LVSG': '/images/desserts/doughnut.jpeg',
+    'LVSP': '/images/desserts/tart.jpeg'
+  }
+  return dessertImages[type] || '/images/desserts/default.jpg'
+}
+
 
 const getDessertName = (type) => {
   const dessertNames = {
@@ -293,6 +301,12 @@ const getOppositeType = (type) => {
   transition: transform 0.4s ease;
 }
 
+.dessert-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 .dessert-image-container:hover {
   transform: scale(1.02);
 }
