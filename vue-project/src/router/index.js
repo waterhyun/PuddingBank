@@ -5,15 +5,16 @@ import ArticleCreateView from '@/views/articles/ArticleCreateView.vue'
 import ArticleDetailView from '@/views/articles/ArticleDetailView.vue'
 import BankSearchView from '@/views/locations/BankSearchView.vue'
 import ExchangesView from '@/views/exchanges/ExchangesView.vue'
-import LoginView from '@/views/auth/LoginView.vue'
-import ProfileView from '@/views/auth/ProfileView.vue'
-import SignUpView from '@/views/auth/SignUpView.vue'
 import { useAuthStore } from '@/stores/auth'
 import ProductsView from '@/views/products/ProductsView.vue'
 // MBTI 관련 컴포넌트 import
 import LoanMBTIResultView from '@/views/products/LoanMBTIResultView.vue'
 import LoanMBTITestView from '@/views/products/LoanMBTITestView.vue'
 import ProductDetail from '@/views/products/ProductDetail.vue'
+// 대출 상품 비교
+import LoanComparisonView from '@/views/products/LoanComparisonView.vue'
+import MortgageDetailView from '@/views/products/MortgageDetailView.vue'
+import LeaseDetailView from '@/views/products/LeaseDetailView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -90,6 +91,21 @@ const router = createRouter({
       component: ProductDetail,
       props: true,
     },
+    {
+      path: '/loan-comparison',
+      name: 'LoanComparison',
+      component: LoanComparisonView,
+    },
+    {
+      path: '/loans/mortgage/:id',
+      name: 'mortgage-detail',
+      component: MortgageDetailView
+    },
+    {
+      path: '/loans/lease/:id',
+      name: 'lease-detail',
+      component: LeaseDetailView
+    }
   ] 
 })
 

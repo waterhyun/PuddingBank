@@ -33,7 +33,8 @@ const handleBankSearch = () => {
         <div>
           <RouterLink to="/">Home</RouterLink> |
           <RouterLink to="/products">예적금비교</RouterLink> |
-          <RouterLink to="/loan-test">대출상품추천</RouterLink> | 
+          <RouterLink to="/loan-comparison">대출상품비교</RouterLink> | 
+          <!-- <RouterLink to="/loan-test">대출상품추천</RouterLink> |  -->
           <RouterLink to="/articles">게시판</RouterLink> |
           <a href="#" @click.prevent="handleBankSearch">은행 찾기</a> |
           <RouterLink to="/exchanges">환율계산기</RouterLink>

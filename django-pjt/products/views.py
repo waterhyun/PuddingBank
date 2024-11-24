@@ -15,9 +15,13 @@ from .models import (
     DepositOptions,
     SavingProducts, 
     SavingOptions,
-    Wishlist
+    Wishlist,
     # RentHouseLoan,
     # UserProduct
+    MortgageLoan,
+    MortgageLoanOption,
+    LeaseLoan,
+    LeaseLoanOption
 )
 from .serializers import (
     # BaseProductSerializer,
@@ -116,9 +120,10 @@ def deposit_product_detail(request, product_id):
     serializer = DepositProductWithOptionSerialzier(product)  
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 def mortgage_loans(request):
-    """주택담보대출 상품 목록 조회"""
+    """주택담보대출 상품 목록 조회 및 DB 저장"""
     url = 'http://finlife.fss.or.kr/finlifeapi/mortgageLoanProductsSearch.json'
     params = {
         'auth': settings.FSS_API_KEY,
@@ -131,14 +136,55 @@ def mortgage_loans(request):
         response.raise_for_status()
         data = response.json()
         
-        result = []
         base_list = data.get('result', {}).get('baseList', [])
         option_list = data.get('result', {}).get('optionList', [])
         
+        # DB에 데이터 저장
         for base in base_list:
+            loan, created = MortgageLoan.objects.update_or_create(
+                fin_co_no=base['fin_co_no'],
+                fin_prdt_cd=base['fin_prdt_cd'],
+                defaults={
+                    'kor_co_nm': base['kor_co_nm'],
+                    'fin_prdt_nm': base['fin_prdt_nm'],
+                    'join_way': base['join_way'],
+                    'loan_inci_expn': base['loan_inci_expn'],
+                    'erly_rpay_fee': base['erly_rpay_fee'],
+                    'dly_rate': base['dly_rate'],
+                    'loan_lmt': base['loan_lmt'],
+                    'dcls_strt_day': base['dcls_strt_day'],
+                    'dcls_end_day': base['dcls_end_day'],
+                    'fin_co_subm_day': base['fin_co_subm_day'],
+                }
+            )
+            
+            # 해당 상품의 옵션 정보 저장
             product_options = [opt for opt in option_list if opt['fin_prdt_cd'] == base['fin_prdt_cd']]
-            base['options'] = product_options
-            result.append(base)
+            for option in product_options:
+                MortgageLoanOption.objects.update_or_create(
+                    loan=loan,
+                    fin_prdt_cd=option['fin_prdt_cd'],
+                    mrtg_type=option['mrtg_type'],
+                    rpay_type=option['rpay_type'],
+                    lend_rate_type=option['lend_rate_type'],
+                    defaults={
+                        'lend_rate_min': option['lend_rate_min'],
+                        'lend_rate_max': option['lend_rate_max'],
+                        'lend_rate_avg': option['lend_rate_avg'] if option['lend_rate_avg'] else None,
+                    }
+                )
+        
+        # 저장된 데이터 조회하여 반환
+        loans = MortgageLoan.objects.all().prefetch_related('options')
+        result = []
+        for loan in loans:
+            loan_data = {
+                'fin_co_no': loan.fin_co_no,
+                'kor_co_nm': loan.kor_co_nm,
+                'fin_prdt_nm': loan.fin_prdt_nm,
+                'options': list(loan.options.values())
+            }
+            result.append(loan_data)
             
         return Response(result)
         
@@ -151,37 +197,39 @@ def mortgage_loans(request):
 @api_view(['GET'])
 def mortgage_loan_detail(request, loan_id):
     """주택담보대출 상품 상세 정보 조회"""
-    url = 'http://finlife.fss.or.kr/finlifeapi/mortgageLoanProductsSearch.json'
-    params = {
-        'auth': settings.FSS_API_KEY,
-        'topFinGrpNo': '020000',
-        'pageNo': '1'
+    loan = get_object_or_404(MortgageLoan, id=loan_id)
+    
+    result = {
+        'fin_prdt_cd': loan.fin_prdt_cd,  # 추가
+        'fin_co_no': loan.fin_co_no,
+        'kor_co_nm': loan.kor_co_nm,
+        'fin_prdt_nm': loan.fin_prdt_nm,
+        'join_way': loan.join_way,
+        'loan_inci_expn': loan.loan_inci_expn,
+        'erly_rpay_fee': loan.erly_rpay_fee,
+        'dly_rate': loan.dly_rate,
+        'loan_lmt': loan.loan_lmt,
+        'dcls_strt_day': loan.dcls_strt_day,
+        'dcls_end_day': loan.dcls_end_day,
+        'options': [{
+            'mrtg_type': opt.mrtg_type,
+            'mrtg_type_nm': opt.get_mrtg_type_display(),
+            'rpay_type': opt.rpay_type,
+            'rpay_type_nm': opt.get_rpay_type_display(),
+            'lend_rate_type': opt.lend_rate_type,
+            'lend_rate_type_nm': opt.get_lend_rate_type_display(),
+            'lend_rate_min': opt.lend_rate_min,
+            'lend_rate_max': opt.lend_rate_max,
+            'lend_rate_avg': opt.lend_rate_avg,
+        } for opt in loan.options.all()]
     }
     
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        data = response.json()
-        
-        base_list = data.get('result', {}).get('baseList', [])
-        option_list = data.get('result', {}).get('optionList', [])
-        
-        product = next((item for item in base_list if item['fin_prdt_cd'] == str(loan_id)), None)
-        if product:
-            product['options'] = [opt for opt in option_list if opt['fin_prdt_cd'] == str(loan_id)]
-            return Response(product)
-            
-        return Response({'message': '상품을 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
-        
-    except requests.RequestException as e:
-        return Response({
-            'message': 'API 요청 실패',
-            'error': str(e)
-        }, status=status.HTTP_400_BAD_REQUEST)
+    return Response(result)
 
+# 전세자금대출
 @api_view(['GET'])
 def lease_loans(request):
-    """전세자금대출 상품 목록 조회"""
+    """전세자금대출 상품 목록 조회 및 DB 저장"""
     url = 'http://finlife.fss.or.kr/finlifeapi/rentHouseLoanProductsSearch.json'
     params = {
         'auth': settings.FSS_API_KEY,
@@ -194,14 +242,63 @@ def lease_loans(request):
         response.raise_for_status()
         data = response.json()
         
-        result = []
         base_list = data.get('result', {}).get('baseList', [])
         option_list = data.get('result', {}).get('optionList', [])
         
+        # DB에 데이터 저장
         for base in base_list:
+            loan, created = LeaseLoan.objects.update_or_create(
+                fin_co_no=base['fin_co_no'],
+                fin_prdt_cd=base['fin_prdt_cd'],
+                defaults={
+                    'kor_co_nm': base['kor_co_nm'],
+                    'fin_prdt_nm': base['fin_prdt_nm'],
+                    'join_way': base['join_way'],
+                    'loan_inci_expn': base['loan_inci_expn'],
+                    'erly_rpay_fee': base['erly_rpay_fee'],
+                    'dly_rate': base['dly_rate'],
+                    'loan_lmt': base['loan_lmt'],
+                    'dcls_strt_day': base['dcls_strt_day'],
+                    'dcls_end_day': base['dcls_end_day'],
+                    'fin_co_subm_day': base['fin_co_subm_day'],
+                }
+            )
+            
+            # 해당 상품의 옵션 정보 저장
             product_options = [opt for opt in option_list if opt['fin_prdt_cd'] == base['fin_prdt_cd']]
-            base['options'] = product_options
-            result.append(base)
+            for option in product_options:
+                LeaseLoanOption.objects.update_or_create(
+                    loan=loan,
+                    fin_prdt_cd=option['fin_prdt_cd'],
+                    rpay_type=option['rpay_type'],
+                    lend_rate_type=option['lend_rate_type'],
+                    defaults={
+                        'lend_rate_min': option['lend_rate_min'],
+                        'lend_rate_max': option['lend_rate_max'],
+                        'lend_rate_avg': option.get('lend_rate_avg', None),
+                    }
+                )
+        
+        # 저장된 데이터 조회하여 반환
+        loans = LeaseLoan.objects.all().prefetch_related('options')
+        result = []
+        for loan in loans:
+            loan_data = {
+                'id': loan.id,
+                'fin_co_no': loan.fin_co_no,
+                'kor_co_nm': loan.kor_co_nm,
+                'fin_prdt_nm': loan.fin_prdt_nm,
+                'join_way': loan.join_way,
+                'loan_inci_expn': loan.loan_inci_expn,
+                'erly_rpay_fee': loan.erly_rpay_fee,
+                'dly_rate': loan.dly_rate,
+                'loan_lmt': loan.loan_lmt,
+                'dcls_strt_day': loan.dcls_strt_day,
+                'dcls_end_day': loan.dcls_end_day,
+                'fin_co_subm_day': loan.fin_co_subm_day,
+                'options': list(loan.options.values())
+            }
+            result.append(loan_data)
             
         return Response(result)
         
@@ -211,41 +308,37 @@ def lease_loans(request):
             'error': str(e)
         }, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 def lease_loan_detail(request, loan_id):
     """전세자금대출 상품 상세 정보 조회"""
-    url = 'http://finlife.fss.or.kr/finlifeapi/rentHouseLoanProductsSearch.json'
-    params = {
-        'auth': settings.FSS_API_KEY,
-        'topFinGrpNo': '020000',
-        'pageNo': '1'
+    loan = get_object_or_404(LeaseLoan, id=loan_id)
+    
+    result = {
+        'fin_prdt_cd': loan.fin_prdt_cd,  # 추가
+        'fin_co_no': loan.fin_co_no,
+        'kor_co_nm': loan.kor_co_nm,
+        'fin_prdt_nm': loan.fin_prdt_nm,
+        'join_way': loan.join_way,
+        'loan_inci_expn': loan.loan_inci_expn,
+        'erly_rpay_fee': loan.erly_rpay_fee,
+        'dly_rate': loan.dly_rate,
+        'loan_lmt': loan.loan_lmt,
+        'dcls_strt_day': loan.dcls_strt_day,
+        'dcls_end_day': loan.dcls_end_day,
+        'fin_co_subm_day': loan.fin_co_subm_day,
+        'options': [{
+            'rpay_type': opt.rpay_type,
+            'rpay_type_nm': opt.get_rpay_type_display(),
+            'lend_rate_type': opt.lend_rate_type,
+            'lend_rate_type_nm': opt.get_lend_rate_type_display(),
+            'lend_rate_min': opt.lend_rate_min,
+            'lend_rate_max': opt.lend_rate_max,
+            'lend_rate_avg': opt.lend_rate_avg,
+        } for opt in loan.options.all()]
     }
     
-    try:
-        response = requests.get(url, params=params)
-        response.raise_for_status()
-        data = response.json()
-        
-        base_list = data.get('result', {}).get('baseList', [])
-        option_list = data.get('result', {}).get('optionList', [])
-        
-        # 특정 상품 찾기
-        product = next((item for item in base_list if item['fin_prdt_cd'] == str(loan_id)), None)
-        if product:
-            # 해당 상품의 옵션 정보 추가
-            product['options'] = [opt for opt in option_list if opt['fin_prdt_cd'] == str(loan_id)]
-            return Response(product)
-            
-        return Response({
-            'message': '상품을 찾을 수 없습니다.'
-        }, status=status.HTTP_404_NOT_FOUND)
-        
-    except requests.RequestException as e:
-        return Response({
-            'message': 'API 요청 실패',
-            'error': str(e)
-        }, status=status.HTTP_400_BAD_REQUEST)
-    
+    return Response(result)
 
 ### MBTI 검사
 # 초기 질문 처리
