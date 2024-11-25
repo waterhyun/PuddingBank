@@ -15,6 +15,8 @@ import ProductDetail from '@/views/products/ProductDetail.vue'
 import LoanComparisonView from '@/views/products/LoanComparisonView.vue'
 import MortgageDetailView from '@/views/products/MortgageDetailView.vue'
 import LeaseDetailView from '@/views/products/LeaseDetailView.vue'
+import ServicrInfo from '@/views/ServiceInfo.vue'
+import ServiceInfo from '@/views/ServiceInfo.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +25,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    { // 서비스 소게글
+      path: '/service/',
+      name: 'Service',
+      component: ServiceInfo,
     },
     { // 게시글 전체 조회
       path: '/articles/',

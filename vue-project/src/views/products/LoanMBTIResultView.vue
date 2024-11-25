@@ -248,13 +248,13 @@ const getOppositeType = (type) => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
-  background-color: #fff5f5;
+  background-color: #fff1c9;
 }
 
 /* 메인 타이틀 */
 .main-title {
   text-align: center;
-  color: #d4547d;
+  color: #73553C;
   font-size: 2.5em;
   margin-bottom: 40px;
   font-weight: 700;
@@ -281,7 +281,7 @@ const getOppositeType = (type) => {
 
 .mbti-type {
   font-size: 3em;
-  color: #d4547d;
+  color: #f5c946;
   text-align: center;
   margin-bottom: 30px;
   font-weight: 800;
@@ -313,7 +313,7 @@ const getOppositeType = (type) => {
 
 .dessert-name {
   font-size: 1.8em;
-  color: #d4547d;
+  color: #f5c946;
   margin: 20px 0;
   font-weight: 600;
 }
@@ -333,7 +333,7 @@ const getOppositeType = (type) => {
 }
 
 .analysis-title {
-  color: #d4547d;
+  color: #f5c946;
   font-size: 1.6em;
   margin-bottom: 25px;
   text-align: center;
@@ -362,7 +362,7 @@ const getOppositeType = (type) => {
 
 .letter {
   font-weight: 700;
-  color: #d4547d;
+  color: #f5c946;
   font-size: 1.4em;
   min-width: 35px;
 }
@@ -376,13 +376,13 @@ const getOppositeType = (type) => {
 .opposite-type-section {
   margin-top: 30px;
   padding: 25px;
-  background: #fff5f5;
+  background: #fff1c9;
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(212, 84, 125, 0.08);
 }
 
 .opposite-type-section h4 {
-  color: #d4547d;
+  color: #73553C;
   font-size: 1.4em;
   font-weight: 600;
   text-align: center;
@@ -410,7 +410,7 @@ const getOppositeType = (type) => {
 }
 
 .opposite-type {
-  color: #d4547d;
+  color: #73553C;
   font-size: 1.8em;
   font-weight: 700;
   margin-bottom: 5px;
@@ -427,11 +427,11 @@ const getOppositeType = (type) => {
   padding: 40px;
   background: white;
   border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(212, 84, 125, 0.1);
+  box-shadow: rgba(233, 218, 4, 0.15);
 }
 
 .recommendations-section h2 {
-  color: #d4547d;
+  color: #f5c946;
   text-align: center;
   margin-bottom: 40px;
 }
@@ -446,7 +446,7 @@ const getOppositeType = (type) => {
   background: #fff;
   border-radius: 15px;
   padding: 25px;
-  box-shadow: 0 4px 15px rgba(212, 84, 125, 0.15);
+  box-shadow: 0 4px 15px rgba(233, 218, 4, 0.15);
   transition: transform 0.3s ease;
 }
 
@@ -460,7 +460,7 @@ const getOppositeType = (type) => {
   gap: 15px;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 2px dashed rgba(212, 84, 125, 0.2);
+  border-bottom: 2px dashed rgb(250, 234, 14);
 }
 
 .dessert-icon {
@@ -478,7 +478,7 @@ const getOppositeType = (type) => {
 }
 
 .rate-info h4, .matching-points h4 {
-  color: #d4547d;
+  color: #f5c946;
   margin-bottom: 15px;
 }
 
@@ -496,7 +496,7 @@ const getOppositeType = (type) => {
 
 .matching-points li:before {
   content: "•";
-  color: #d4547d;
+  color: #f5c946;
   position: absolute;
   left: 0;
 }
