@@ -186,9 +186,9 @@ export default {
     <div class="progress-container">
       <h2 class="test-title">나의 대출 디저트 찾기</h2>
       <div class="progress-bar">
-        <div class="progress" :style="{ width: `${(currentStep/totalSteps)*100}%` }"></div>
-        <span class="step-counter">{{ currentStep }}/{{ totalSteps }}</span>
+        <div class="progress" :style="{ width: `${(currentStep/totalSteps)*100}%` }"></div>     
       </div>
+      <span class="step-counter">{{ currentStep }}/{{ totalSteps }}</span>
     </div>
 
     <!-- 질문 섹션 -->
@@ -274,10 +274,11 @@ export default {
 
 .test-title {
   text-align: center;
-  color: #d4547d;
+  color: #73553C;
   font-size: 2.2em;
   margin-bottom: 30px;
   font-weight: 700;
+  font-family: 'JalnanFont', sans-serif;
 }
 
 .progress-container {
@@ -287,15 +288,16 @@ export default {
 .progress-bar {
   position: relative;
   height: 12px;
-  background: #ffe5ec;
+  background: #fff1c9;
   border-radius: 10px;
   overflow: hidden;
 }
 
+
 .progress {
   position: absolute;
   height: 100%;
-  background: linear-gradient(45deg, #d4547d, #ff8fab);
+  background: linear-gradient(45deg, #f5c946, #ffe28a);
   border-radius: 10px;
   transition: width 0.5s ease;
 }
@@ -303,9 +305,10 @@ export default {
 .step-counter {
   display: block;
   text-align: center;
-  color: #d4547d;
+  color: #f5c946;
   margin-top: 10px;
   font-weight: 600;
+  font-family: 'JalnanFont', sans-serif;
 }
 
 .question-section {
@@ -323,6 +326,7 @@ export default {
   font-size: 1.3em;
   margin-bottom: 20px;
   text-align: center;
+  font-family: 'JalnanFont', sans-serif;
 }
 
 .answer-buttons {
@@ -334,24 +338,25 @@ export default {
 
 .answer-button {
   padding: 15px 20px;
-  border: 2px solid #ffe5ec;
+  border: 2px solid #f5d98c;
   border-radius: 12px;
   background: #fff;
   color: #666;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 1em;
+  font-family: 'GowunDodum-Regular', sans-serif;
 }
 
 .answer-button:hover {
-  background: #ffe5ec;
-  color: #d4547d;
+  background: #fff1c9;
+  color: #f5c946;
 }
 
 .answer-button.selected {
-  background: #d4547d;
+  background: #f5c946;
   color: white;
-  border-color: #d4547d;
+  border-color: #f5c946 ;
 }
 
 .navigation-buttons {
@@ -370,17 +375,18 @@ export default {
   font-weight: bold;
   transition: all 0.3s ease;
   min-width: 120px;
+  font-family: 'GowunDodum-Regular', sans-serif;
 }
 
 .prev {
-  background: #ffe5ec;
-  color: #d4547d;
+  background: #fff1c9;
+  color: #f5c946;
   position: absolute;
   left: 0;
 }
 
 .next, .submit {
-  background: #d4547d;
+  background: #f5c946;
   color: white;
 }
 
@@ -412,8 +418,8 @@ export default {
 }
 
 .loading-spinner {
-  border: 4px solid #ffe5ec;
-  border-top: 4px solid #d4547d;
+  border: 4px solid #fff1c9;
+  border-top: 4px solid #f5c946;
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -422,10 +428,10 @@ export default {
 }
 
 .error-message {
-  color: #d4547d;
+  color: #f5c946;
   margin-top: 20px;
   padding: 15px;
-  background: #ffe5ec;
+  background: #fff1c9;
   border-radius: 8px;
   text-align: center;
 }

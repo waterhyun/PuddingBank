@@ -1,10 +1,11 @@
 <template>
-  <div class="product-detail">
-    <h1 class="detail-title">{{ type === "saving" ? "적금 상세 정보" : "예금 상세 정보" }}</h1>
-    <div class="detail-container">
-      <!-- 기본 정보 섹션 -->
+  <div class="product-detail-view">
+    <!-- 예금/적금 상세 정보 -->
+    <div class="filter-sidebar">
+      <h5>{{ type === "saving" ? "적금 상품" : "예금 상품" }}</h5>
+      <h3> {{ product?.fin_prdt_nm }} </h3>
       <div class="basic-info">
-        <p><strong>상품명:</strong> {{ product?.fin_prdt_nm }}</p>
+        <!-- <p><strong>상품명:</strong> {{ product?.fin_prdt_nm }}</p> -->
         <p><strong>은행명:</strong> {{ product?.kor_co_nm }}</p>
         <p><strong>특이사항:</strong> {{ product?.etc_note || "없음" }}</p>
       </div>
@@ -12,36 +13,38 @@
       <!-- 찜하기 버튼 -->
       <div class="wishlist-actions">
         <i
-          class="fas fa-heart wishlist-icon"
-          :class="{ added: isWishlisted }"
-          @click="toggleWishlist"
+        class="fas fa-heart wishlist-icon"
+        :class="{ added: isWishlisted }"
+        @click="toggleWishlist"
         ></i>
+        <p>찜하기</p>
       </div>
-      <!-- 찜하기 버튼 끝 -->
+    </div>
 
-      <!-- 옵션 정보 섹션 -->
-      <div class="options-info">
-        <h2>상품 옵션</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>기간(개월)</th>
-              <th>기본 금리(%)</th>
-              <th>우대 금리(%)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="option in product?.options || []" :key="option.save_trm">
-              <td>{{ option.save_trm }}</td>
-              <td>{{ option.intr_rate }}</td>
-              <td>{{ option.intr_rate2 || "-" }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- 상품 옵션 정보 -->
+    <div class="options-container">
+      <h2>상품 옵션</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>기간(개월)</th>
+            <th>기본 금리(%)</th>
+            <th>우대 금리(%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="option in product?.options || []" :key="option.save_trm">
+            <td>{{ option.save_trm }}</td>
+            <td>{{ option.intr_rate }}</td>
+            <td>{{ option.intr_rate2 || "-" }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
+
+
 
 <script setup>
 import { useRoute } from "vue-router";
@@ -146,93 +149,162 @@ async function toggleWishlist() {
 </script>
 
 <style scoped>
-.product-detail {
-  margin: 20px auto;
-  padding: 20px;
-  max-width: 800px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.detail-title {
-  text-align: center;
-  font-size: 1.8rem;
-  color: #0046b3;
-  margin-bottom: 20px;
-}
-
-.detail-container {
+/* 전체 레이아웃 */
+.product-detail-view {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* 위아래 배치 */
   gap: 20px;
+  padding: 20px;
+  width: 100%; /* 전체 화면에 맞추기 */
+  box-sizing: border-box; /* 여백 포함 */
+  margin: 0 auto; /* 중앙 정렬 */
+  background-color: #fff7f0; /* 푸딩-1 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden; /* 가로로 콘텐츠가 넘치지 않도록 설정 */
 }
 
-/* 기본 정보 섹션 */
-.basic-info p {
-  font-size: 1rem;
-  color: #333;
-  margin: 5px 0;
+/* 상세 정보(상단) */
+.filter-sidebar {
+  padding: 15px;
+  width: 100%; /* 기본적으로 전체 너비 사용 */
+  max-width: 900px; /* 최대 너비 제한 */
+  margin: 0 auto; /* 중앙 정렬 */
+  background-color: #FEF0AC; /* 푸딩-2 */
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  position: relative;
 }
 
-.basic-info strong {
-  color: #0046b3;
+/* 상세 정보 제목 */
+.filter-sidebar h5 {
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 1rem; /* 크기를 조금 키움 */
+  color: #73553C; /* 푸딩-3 */
+  margin-bottom: 15px;
 }
 
-/* 옵션 정보 섹션 */
-.options-info {
-  margin-top: 20px;
+/* 상품명 */
+.filter-sidebar h3 {
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 1.5 rem; /* 크기를 조금 키움 */
+  color: #3D0F0E; /* 푸딩-3 */
+  margin-bottom: 15px;
 }
 
-.options-info h2 {
-  font-size: 1.5rem;
-  color: #0046b3;
-  margin-bottom: 10px;
+
+/* 상세 정보 텍스트 */
+.filter-sidebar p {
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 1rem; /* 텍스트 크기 확대 */
+  color: #3D0F0E; /* 푸딩-5 */
+  margin-bottom: 15px;
 }
 
-/* 테이블 스타일 */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #fff;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-thead {
-  background-color: #0046b3;
-  color: #fff;
-}
-
-th,
-td {
-  padding: 12px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-  font-size: 0.9rem;
-}
-
-tbody tr:hover {
-  background-color: #f1f1f1;
-}
-
-/* 찜하기 버튼 스타일 */
+/* 찜하기 버튼 */
 .wishlist-actions {
+  position: absolute; /* 부모 요소(filter-sidebar)를 기준으로 위치 설정 */
+  bottom: 15px; /* 아래에서 15px 떨어짐 */
+  right: 15px; /* 오른쪽에서 15px 떨어짐 */
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  align-items: center; /* 세로 중앙 정렬 */
+  gap: 10px; /* 하트와 글씨 사이 간격 */
 }
 
 .wishlist-icon {
-  font-size: 2.5rem; /* 하트 크기 */
-  color: #ccc; /* 기본 하트 색상 */
+  font-size: 1.5rem; /* 아이콘 크기 확대 */
+  color: #ffffff;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .wishlist-icon.added {
-  color: #e74c3c; /* 찜한 상태에서의 빨간색 하트 */
+  color: #e74c3c;
 }
+
+.wishlist-actions p {
+  font-size: 0.8rem; /* 글씨 크기 */
+  color: #73553C; /* 텍스트 색상 */
+  font-family: 'JalnanFont', sans-serif; /* 텍스트 폰트 */
+  margin: 0;
+}
+
+/* 상품 옵션(하단) */
+.options-container {
+  padding: 15px;
+  width: 100%; /* 기본적으로 전체 너비 사용 */
+  max-width: 900px; /* 최대 너비 제한 */
+  margin: 0 auto; /* 중앙 정렬 */
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* 상품 옵션 제목 */
+.options-container h2 {
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 1.5rem;
+  color: #73553C;
+  margin-bottom: 15px;
+}
+
+/* 테이블 스타일 */
+table {
+  width: 100%; /* 테이블이 섹션 안에서 전체 너비를 차지 */
+  border-collapse: collapse;
+  background-color: #fff;
+  overflow-x: auto; /* 테이블 내용이 길어질 경우 스크롤 가능 */
+}
+
+thead th {
+  background-color: #73553C; /* 푸딩-3 */
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  font-size: 1rem; /* 텍스트 크기 확대 */
+  font-family: 'GowunDodum-Regular', sans-serif;
+}
+
+tbody td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #DBDAD6; /* 푸딩-4 */
+  font-family: 'GowunDodum-Regular', sans-serif;
+}
+
+tbody tr:hover {
+  background-color: #FEF0AC; /* 푸딩-1 */
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .filter-sidebar,
+  .options-container {
+    max-width: 95%; /* 화면 너비에 맞춰 조정 */
+  }
+}
+
+@media (max-width: 768px) {
+  .product-detail-view {
+    padding: 15px;
+    max-width: 100%; /* 모바일 화면에서는 양쪽 여백 제거 */
+  }
+
+  .filter-sidebar,
+  .options-container {
+    padding: 10px;
+    max-width: 100%; /* 모바일에서도 콘텐츠가 전체 화면을 활용 */
+  }
+
+  table {
+    font-size: 0.9rem; /* 작은 화면에서는 폰트 크기 축소 */
+  }
+
+  .wishlist-icon {
+    font-size: 2rem; /* 찜하기 버튼 크기 축소 */
+  }
+}
+
 
 </style>

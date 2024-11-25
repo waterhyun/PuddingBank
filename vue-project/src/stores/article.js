@@ -8,7 +8,6 @@ export const useArticleStore = defineStore('article', () => {
   const article = ref(null)
   const comments = ref([])
   const router = useRouter()
-
   // 전체 게시글 조회
   const getArticles = function () {
     axios({
@@ -39,8 +38,8 @@ export const useArticleStore = defineStore('article', () => {
   }
 
   return { 
-    articles, 
-    article, 
+    articles,
+    article,
     comments,
     getArticles, 
     getArticle

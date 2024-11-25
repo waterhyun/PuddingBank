@@ -132,7 +132,7 @@ onMounted(async () => {
   display: flex;
   gap: 20px;
   padding: 20px;
-  background-color: #f7f8fa;
+  background-color: #fffefb; 
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   align-items: flex-start; /* 필터와 콘텐츠의 세로 정렬을 상단으로 설정 */
@@ -140,55 +140,68 @@ onMounted(async () => {
 
 /* 필터 영역 스타일 */
 .filter-sidebar {
-  position: sticky; /* 스크롤에 따라 이동 */
-  top: 20px; /* 화면 상단에서 20px 간격 */
+  position: sticky;
+  top: 20px;
   width: 20%;
-  padding: 10px;
-  background-color: #ffffff;
-  border-radius: 8px;
+  padding: 15px;
+  background-color: #FEF0AC;  /* 푸딩-2 */
+  border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  height: auto; /* 콘텐츠 높이에 맞춤 */
+  height: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* 항목 간 간격 */
+  gap: 15px;
 }
 
+/* 검색 조건 텍스트 스타일 */
+.filter-sidebar p {
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 0.95rem;
+  color: #3D0F0E; /* 푸딩-5 */
+  margin-bottom: 15px;
+}
 /* 필터 제목 */
 .filter-sidebar h3 {
-  font-size: 1rem;
-  margin-bottom: 5px;
-  color: #333;
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #73553C; /* 푸딩-3 */
 }
 
 /* 필터 라벨 */
 .filter-item label {
-  font-size: 0.85rem;
-  color: #555;
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 0.9rem;
+  color: #3D0F0E; /* 푸딩-5 */
   margin-bottom: 5px;
 }
 
 /* 드롭다운 메뉴 */
 .filter-item select {
+  font-family: 'JalnanFont', sans-serif;
   width: 100%;
   padding: 8px;
-  font-size: 0.85rem;
-  border: 1px solid #ddd;
+  font-size: 0.9rem;
+  border: 1px solid #DBDAD6; /* 푸딩-4 */
   border-radius: 5px;
+  background-color: #FFFFFF;
 }
 
 /* 초기화 버튼 */
 .filter-sidebar button {
-  padding: 8px;
-  font-size: 0.9rem;
-  background-color: #0056b3;
-  color: #ffffff;
+  padding: 10px;
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 1rem;
+  background-color: #3D0F0E; /* 푸딩-5 */
+  color: #FFFFFF;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .filter-sidebar button:hover {
-  background-color: #003d80;
+  background-color: #73553C; /* 푸딩-3 */
 }
 
 /* 탭 스타일 */
@@ -204,9 +217,10 @@ onMounted(async () => {
 .tabs button {
   flex: 1;
   padding: 10px 15px;
+  font-family: 'JalnanFont', sans-serif;
   font-size: 1rem;
-  color: #0056b3;
-  background: none;
+  color: #3D0F0E; /* 푸딩-5 */
+  background-color: transparent;
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
@@ -214,19 +228,21 @@ onMounted(async () => {
 }
 
 .tabs button.active {
+  font-family: 'JalnanFont', sans-serif;
   font-weight: bold;
-  color: #0056b3;
-  border-bottom: 2px solid #0056b3;
+  color: #3D0F0E; /* 푸딩-5 */
+  border-bottom: 2px solid #3D0F0E;
 }
 
 .tabs button:hover {
-  color: #003d80;
+  color: #73553C; /* 푸딩-3 */
 }
 
 .tab-content h2 {
   margin-bottom: 20px;
+  font-family: 'JalnanFont', sans-serif;
   font-size: 1.5rem;
-  color: #333;
+  color: #73553C; /* 푸딩-3 */
 }
 
 /* 반응형 */
@@ -243,5 +259,6 @@ onMounted(async () => {
     width: 100%;
   }
 }
+
 
 </style>
