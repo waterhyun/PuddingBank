@@ -84,15 +84,16 @@ const toggleMenu = () => {
 
 <style scoped>
 @font-face {
-  font-family: 'jjinbbangB'; /* Ajjinbbang 폰트 */
+  font-family: 'jjinbbangB';
   src: url('@/assets/fonts/AjjinbbangB.TTF') format('truetype');
+  font-display: swap; /* 폰트 로딩 최적화 */
   font-weight: normal;
   font-style: normal;
 }
-
 @font-face {
   font-family: 'jjinbbangM'; 
   src: url('@/assets/fonts/AjjinbbangM.TTF') format('truetype');
+  font-display: swap; /* 폰트 로딩 최적화 */
   font-weight: normal;
   font-style: normal;
 }
@@ -100,6 +101,7 @@ const toggleMenu = () => {
 @font-face {
   font-family: 'JalnanFont'; /* Jalnan2TTF 폰트 */
   src: url('@/assets/fonts/Jalnan2TTF.ttf') format('truetype');
+  font-display: swap; /* 폰트 로딩 최적화 */
   font-weight: normal;
   font-style: normal;
 }
@@ -107,6 +109,7 @@ const toggleMenu = () => {
 @font-face {
   font-family: 'GowunDodum-Regular';
   src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff') format('woff');
+  font-display: swap; /* 폰트 로딩 최적화 */
   font-weight: normal;
   font-style: normal;
 }
