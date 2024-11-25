@@ -51,3 +51,40 @@ def profile_delete(request):
             {'error': '회원 탈퇴 처리 중 오류가 발생했습니다.'}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    """비밀번호 변경"""
+    try:
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password1 = request.data.get('new_password1')
+        new_password2 = request.data.get('new_password2')
+        
+        # 현재 비밀번호 확인
+        if not user.check_password(old_password):
+            return Response(
+                {'error': '현재 비밀번호가 일치하지 않습니다.'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # 새 비밀번호 일치 여부 확인
+        if new_password1 != new_password2:
+            return Response(
+                {'error': '새 비밀번호가 일치하지 않습니다.'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        user.set_password(new_password1)
+        user.save()
+        
+        return Response(
+            {'message': '비밀번호가 성공적으로 변경되었습니다.'}, 
+            status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        return Response(
+            {'error': '비밀번호 변경 중 오류가 발생했습니다.'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

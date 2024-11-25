@@ -260,4 +260,18 @@ const toggleMenu = () => {
   }
 }
 
+
+@font-face {
+  font-family: 'JalnanFont'; /* Jalnan2TTF 폰트 */
+  src: url('@/assets/fonts/Jalnan2TTF.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face{
+  font-family: 'GowunDodum-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 </style>

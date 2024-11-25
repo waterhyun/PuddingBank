@@ -4,297 +4,419 @@
     <p>데이터 기준 시간: <strong>{{ store.exchanges.update_date }}</strong></p>
 
     <div class="calculator">
-      <!-- 국가 선택 -->
-      <div class="input-group">
-        <label for="currency-select">국가 선택 </label>
-        <select v-model.trim="selectedCountry">
-          <option disabled value="">국가를 선택하세요</option>
-          <option v-for="exchange in sortedExchanges" 
-          :key="exchange.id" 
-          :value="exchange.cur_nm">
-            {{ exchange.cur_nm }}
-          </option>
-        </select>
-      </div>
+      <div class="input-section">
+        <!-- 국가 선택 -->
+        <div class="input-group">
+          <label>국가 선택</label>
+          <select v-model.trim="selectedCountry">
+            <option disabled value="">국가를 선택하세요</option>
+            <option v-for="exchange in sortedExchanges" 
+            :key="exchange.id" 
+            :value="exchange.cur_nm">
+              {{ exchange.cur_nm }}
+            </option>
+          </select>
+        </div>
 
-      <!-- 외화 금액 -->
-      <br>
-      <div class="input-group">
-        <label for="dollar-amount">외화 금액 입력  </label>
-        <input
-        type="number"
-        v-model.number="dollar_amount"
-        placeholder="외화를 입력해주세요."
-        id="amount-input"
-        min="0"
-        />
-        <button @click="dollarTowon()">외화를 원화로 환전하기</button>
-      </div>
-
-      <!-- 원화 금액 -->
-      <br>
-      <div class="input-group">
-        <label for="won-amount">원화 금액 입력  </label>
-        <input
-          type="number"
-          v-model.number.trim="won_amount"
-          placeholder="원화를 입력해주세요."
-          id="amount-input"
-          min="0"
-        />
-        <button @click="wonTodollar()">원화를 외화로 환전하기</button>
-      </div>
-
-
-      <!-- 결과 -->
-      <div v-if="result_dollar !== 0" class="exchange-result">
-        <div class="card">
-          <p class="country">대한민국 원화 : <strong>{{ formatNumber(won_amount) }}</strong></p>
-          <div class="arrow">
-            <span>▼</span>
+        <!-- 환율 입력 영역 -->
+        <div class="conversion-inputs">
+          <!-- 외화 금액 -->
+          <div class="input-group">
+            <label>외화 금액</label>
+            <div class="input-wrapper">
+              <input
+                type="number"
+                v-model.number="dollar_amount"
+                placeholder="외화를 입력해주세요"
+                min="0"
+              />
+              <span class="currency-label">{{ selectedCountry }}</span>
+            </div>
           </div>
-          <p class="country">{{ selectedCountry }} : <strong>{{ result_dollar }}</strong></p>
+
+          <!-- 원화 금액 -->
+          <div class="input-group">
+            <label>원화 금액</label>
+            <div class="input-wrapper">
+              <input
+                type="number"
+                v-model.number.trim="won_amount"
+                placeholder="원화를 입력해주세요"
+                min="0"
+              />
+              <span class="currency-label">대한민국 원</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div v-if="result_won !== 0" class="exchange-result">
-        <div class="card">
-          <p class="country">{{ selectedCountry }} : <strong>{{ dollar_amount }}</strong></p>
-          <div class="arrow">
-            <span>▼</span>
+      <!-- 결과 섹션 -->
+      <div class="result-section">
+        <!-- 현재 환율 정보 -->
+        <div class="current-rate" v-if="selectedCountry">
+          <p>현재 환율</p>
+          <div class="rate-info">
+            <span>1 {{ selectedCountry }} = {{ getCurrentRate() }} 원</span>
           </div>
-          <p class="country">대한민국 원화 : <strong>{{ formatNumber(result_won) }}</strong></p>
+        </div>
+
+        <div class="exchange-result">
+          <p class="result-text" v-if="won_amount">
+            <span class="amount">{{ formatNumber(won_amount) }} 원</span>
+            <span class="equals">=</span>
+            <strong>{{ result_dollar || 0 }}</strong>
+            <span class="currency">{{ selectedCountry }}</span>
+          </p>
+          <p class="result-text" v-else-if="dollar_amount">
+            <span class="amount">{{ dollar_amount }} {{ selectedCountry }}</span>
+            <span class="equals">=</span>
+            <strong>{{ formatNumber(result_won || 0) }}</strong>
+            <span class="currency">원</span>
+          </p>
+          <p class="result-text" v-else>
+            <span class="amount">0 원</span>
+            <span class="equals">=</span>
+            <strong>0</strong>
+            <span class="currency">{{ selectedCountry }}</span>
+          </p>
         </div>
       </div>
-
-
-      <!-- 설명 -->
-      <footer class="note">
-        <p>* 현지, 인도네시아 루피아는 100 단위, 나머지는 모두 1 단위</p>
-      </footer>
     </div>
+
+    <!-- 설명 -->
+    <footer class="note">
+      <p>* 현지, 인도네시아 루피아는 100 단위, 나머지는 모두 1 단위</p>
+    </footer>
   </div>
 </template>
 
 <script setup>
-// import { RouterLink } from 'vue-router';
-// import ArticleList from '@/components/ArticleList.vue';
-// import { useArticleStore } from '../stores/articles';
-import { onMounted } from 'vue';
-import { useExchangeStore } from '@/stores/exchange';
-import { ref, computed } from 'vue';
-const selectedCountry = ref("")
-const dollar_amount = ref(0)
-const won_amount = ref(0)
+import { ref, computed, watch, onMounted } from 'vue'
+import { useExchangeStore } from '@/stores/exchange'
+
+const store = useExchangeStore()
+const selectedCountry = ref("미국 달러")
+const dollar_amount = ref("")
+const won_amount = ref("")
 const result_won = ref(0)
 const result_dollar = ref(0)
 
-const store = useExchangeStore()
-
-// 서버에서 기준 시간(searchdate) 가져오기
-// 추가해야함
-
-// 가나다 순으로 정렬된 데이터를 제공하는 computed 속성
+// 가나다 순으로 정렬된 데이터
 const sortedExchanges = computed(() => {
   return store.exchanges.slice().sort((a, b) => {
-    return a.cur_nm.localeCompare(b.cur_nm, "ko");
-  });
-});
+    return a.cur_nm.localeCompare(b.cur_nm, "ko")
+  })
+})
 
-// 숫자를 천 단위 쉼표로 포맷팅하는 함수
+// 숫자 포맷팅
 const formatNumber = (value) => {
-  if (!value) return "0";
-  return new Intl.NumberFormat("ko-KR").format(value);
-};
-
-// 외화 → 원화
-const dollarTowon  = function() {
-  // 입력값이 없을 때 경고창 추가
-  if (!selectedCountry.value && (dollar_amount.value === null || dollar_amount.value <= 0)) {
-    alert("국가와 외화 금액을 모두 입력해주세요.");
-    return;
-  }
-
-  if (!selectedCountry.value) {
-    alert("국가를 선택해주세요.");
-    return;
-  }
-
-  if (dollar_amount.value === null || dollar_amount.value <= 0) {
-    alert("외화 금액을 0보다 큰 값을 입력해주세요.");
-    return;
-  }
-
-  const data = store.exchanges.find((item) => item.cur_nm === selectedCountry.value);
-  // 유효하지 않은 국가 선택 시 경고창 추가
-  if (!data) {
-    alert("선택된 국가의 데이터가 없습니다.");
-    return;
-  }
-
-  if (!data) {
-    console.error("선택된 국가의 데이터가 없습니다.");
-    return;
-  }
-  
-  if (data.cur_nm == '일본 옌'){
-    result_won.value = dollar_amount.value*(data.ttb/100)
-  } else {
-    result_won.value = dollar_amount.value*(data.ttb)
-  }
-  result_dollar.value = 0;
+  if (!value) return "0"
+  return new Intl.NumberFormat("ko-KR").format(value)
 }
 
-// 원화 → 외화
-const wonTodollar  = function() {
-  // 입력값이 없을 때 경고창 추가
-  if (!selectedCountry.value && (won_amount.value === null || won_amount.value <= 0)) {
-    alert("국가와 원화 금액을 모두 입력해주세요.");
-    return;
-  }
-
-  if (!selectedCountry.value) {
-    alert("국가를 선택해주세요.");
-    return;
-  }
-
-  if (won_amount.value === null || won_amount.value <= 0) {
-    alert("원화 금액을 0보다 큰 값을 입력해주세요.");
-    return;
-  }
-
-
-  const data = store.exchanges.find((item) => item.cur_nm === selectedCountry.value);
-  // 유효하지 않은 국가 선택 시 경고창 추가
-  if (!data) {
-    alert("선택된 국가의 데이터가 없습니다.");
-    return;
-  }
-  
-  if (data.cur_nm == '일본 옌'){
-    result_dollar.value = (won_amount.value/(data.tts/100)).toFixed(4)
-  } else {
-    result_dollar.value = (won_amount.value/(data.tts)).toFixed(4)
-  } 
-  result_won.value = 0;
+// 현재 환율 정보 가져오기
+const getCurrentRate = () => {
+  const data = store.exchanges.find((item) => item.cur_nm === selectedCountry.value)
+  if (!data) return "0"
+  return formatNumber(data.cur_nm === '일본 옌' ? data.tts/100 : data.tts)
 }
 
+// 외화 → 원화 변환
+const dollarTowon = () => {
+  if (!selectedCountry.value || !dollar_amount.value) return
+  
+  const data = store.exchanges.find((item) => item.cur_nm === selectedCountry.value)
+  if (!data) return
+  
+  result_won.value = data.cur_nm === '일본 옌' 
+    ? dollar_amount.value * (data.ttb/100)
+    : dollar_amount.value * data.ttb
+  result_dollar.value = 0
+}
+
+// 원화 → 외화 변환
+const wonTodollar = () => {
+  if (!selectedCountry.value || !won_amount.value) return
+  
+  const data = store.exchanges.find((item) => item.cur_nm === selectedCountry.value)
+  if (!data) return
+  
+  result_dollar.value = data.cur_nm === '일본 옌'
+    ? (won_amount.value/(data.tts/100)).toFixed(4)
+    : (won_amount.value/data.tts).toFixed(4)
+  result_won.value = 0
+}
+
+// 실시간 계산을 위한 감시자
+watch([dollar_amount, selectedCountry], ([newDollarAmount, newCountry]) => {
+  if (newDollarAmount) {
+    dollarTowon()
+    won_amount.value = ""
+  }
+})
+
+watch([won_amount, selectedCountry], ([newWonAmount, newCountry]) => {
+  if (newWonAmount) {
+    wonTodollar()
+    dollar_amount.value = ""
+  }
+})
 
 onMounted(async () => {
   try {
-    // await store.postExchanges(); // POST 요청으로 데이터 저장
-    await store.getExchanges(); // 저장된 데이터 가져오기
-    console.log(store.exchanges)
+    await store.getExchanges()
+    selectedCountry.value = "미국 달러"
+    console.log('Store loaded:', store.exchanges)
   } catch (error) {
-    console.error('데이터 처리 중 에러 발생:', error);
+    console.error('데이터 처리 중 에러 발생:', error)
   }
-});
-
-
+})
 </script>
 
 <style scoped>
-/* 전체 컨테이너 스타일 */
 .currency-calculator {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background-color: #fffefb;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(115, 85, 60, 0.15);
 }
 
-/* 헤더 스타일 */
-.header {
+h1 {
+  font-family: 'JalnanFont';
+  color: #73553C;
   text-align: center;
-  margin-bottom: 20px;
-}
-
-.header h1 {
+  margin-bottom: 0.5rem;
   font-size: 2rem;
-  color: #007bff;
-  margin: 0;
 }
 
-/* 입력 그룹 스타일 */
-.input-group {
-  margin: 20px 0;
+p {
+  font-family: 'GowunDodum-Regular';
+  color: #73553C;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.calculator {
+  display: flex;
+  gap: 2.5rem;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #FFFEFB;
+  border-radius: 15px;
+  border: 3px solid #FDE49B;
+}
+
+
+select,
+input {
+  width: 100%;
+  padding: 0.6rem 0.8rem; /* 패딩 축소 */
+  border: 2px solid #FDE49B;
+  border-radius: 12px;
+  font-family: 'GowunDodum-Regular';
+  font-size: 0.9rem; /* 폰트 크기 축소 */
+  background-color: #FFFEFB;
+  color: #73553C;
+  transition: all 0.2s ease;
+}
+
+
+
+.currency-label {
+  position: absolute;
+  right: 1rem;
+  font-family: 'GowunDodum-Regular';
+  color: #73553C;
+  font-size: 0.85rem; /* 폰트 크기 축소 */
+  padding: 0 0.5rem;
+  background-color: #FFFEFB;
+  z-index: 1;
 }
 
 .input-group label {
-  display: block;
+  font-family: 'GowunDodum-Regular';
+  color: #73553C;
+  font-size: 0.9rem; /* 1rem에서 0.9rem으로 줄임 */
   font-weight: bold;
-  margin-bottom: 5px;
-  font-size: 1rem;
 }
 
-.input-group input,
-.input-group select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* 0.8rem에서 0.5rem으로 줄임 */
 }
 
-.input-group button {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  font-size: 1rem;
+.conversion-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* 1.5rem에서 1rem으로 줄임 */
+}
+
+/* 입력 섹션 */
+.input-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.input-wrapper {
+  position: relative;
+  background-color: transparent;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+}
+
+
+
+
+/* 결과 섹션 */
+.result-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.current-rate {
+  background-color: #FEF0AC;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 2px solid #FDE49B;
+  text-align: center;
+}
+
+.current-rate p {
+  font-family: 'JalnanFont';
+  color: #73553C;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.rate-info {
+  font-family: 'GowunDodum-Regular';
+  color: #3D0F0E;
+  font-size: 1.2rem;
   font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.input-group button:hover {
-  background-color: #0056b3;
-}
-
-/* 결과 그룹 스타일 */
-.result-group {
-  margin-top: 30px;
 }
 
 .exchange-result {
-  background-color: #ffffff;
-  border-radius: 10px;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  flex: 1;
+  background-color: #FEF0AC;
+  border-radius: 12px;
+  padding: 2rem;
+  border: 2px solid #FDE49B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.exchange-result .card {
-  margin: 10px 0;
+.result-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.3rem;
+  color: #73553C;
+  font-family: 'GowunDodum-Regular';
+  margin: 0;
 }
 
-.exchange-result .country {
+.result-text .amount {
   font-size: 1.2rem;
+}
+
+.result-text .equals {
+  color: #73553C;
+  font-size: 1.4rem;
+  margin: 0.3rem 0;
+}
+
+.result-text strong {
+  color: #3D0F0E;
   font-weight: bold;
-  margin: 10px 0;
-}
-
-.exchange-result .arrow {
   font-size: 2rem;
-  color: #007bff;
-  margin: 10px 0;
 }
 
-.exchange-result strong {
-  color: #007bff;
+.result-text .currency {
+  font-size: 1.1rem;
+  color: #73553C;
 }
 
-/* 설명 스타일 */
-.note {
+.note p {
+  font-family: 'GowunDodum-Regular';
+  color: #73553C;
+  font-size: 0.85rem;
   text-align: center;
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 30px;
+  margin: 0; /* margin을 0으로 초기화 */
+}
+
+.note {
+  margin-top: 2rem;
+  padding: 1.2rem; /* padding으로 내부 여백 통일 */
+  background-color: #FEF0AC;
+  border-radius: 12px;
+  border: 2px solid #FDE49B;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #73553C;
+  box-shadow: 0 0 0 3px rgba(115, 85, 60, 0.1);
+}
+
+@media (max-width: 768px) {
+  .currency-calculator {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .calculator {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1.5rem;
+  }
+  
+  .currency-label {
+    position: static;
+    display: block;
+    text-align: right;
+    margin-top: 0.5rem;
+    transform: none;
+  }
+  
+  .input-wrapper {
+    padding: 0.8rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .current-rate {
+    padding: 1.2rem;
+  }
+  
+  .current-rate p {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .rate-info {
+    font-size: 1.1rem;
+  }
+  
+  .result-text {
+    font-size: 1.1rem;
+  }
+  
+  .result-text strong {
+    font-size: 1.6rem;
+  }
 }
 </style>
