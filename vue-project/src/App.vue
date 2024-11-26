@@ -118,9 +118,7 @@ onBeforeUnmount(() => {
         </template>
         <template v-if="isAuthenticated">
           <RouterLink to="/profile" @click="menuOpen = false">마이페이지</RouterLink>
-          <button @click="handleLogout" class="logout-btn auth-btn">
-            로그아웃
-          </button>
+          <a href="#" @click.prevent="handleLogout" class="nav-link">로그아웃</a>
         </template>
       </div>
     </nav>
@@ -213,17 +211,23 @@ onBeforeUnmount(() => {
 }
 
 .navbar-center a,
-.navbar-right a {
+.navbar-right a,
+.navbar-right .logout-btn {
   font-family: "JalnanFont", sans-serif;
   font-size: 1.3rem;
   color: #3d0f0e;
   text-decoration: none;
   transition: all 0.3s ease;
   position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .navbar-center a::after,
-.navbar-right a::after {
+.navbar-right a::after,
+.navbar-right .logout-btn::after {
   content: '';
   position: absolute;
   width: 0;
@@ -236,7 +240,8 @@ onBeforeUnmount(() => {
 }
 
 .navbar-center a:hover::after,
-.navbar-right a:hover::after {
+.navbar-right a:hover::after,
+.navbar-right .logout-btn:hover::after {
   width: 100%;
 }
 
