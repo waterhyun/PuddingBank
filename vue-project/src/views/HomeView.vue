@@ -247,7 +247,7 @@ const navigateToProducts = () => {
 
 .main-container {
   max-width: 1200px;
-  min-height: 1000px;
+  min-height: 800px;
   margin: 0 auto;
   padding: 20px;
   background-color: #fffefb;
@@ -432,12 +432,15 @@ const navigateToProducts = () => {
 .notification-box {
   background: #fffbdb;
   border-radius: 10px;
-  padding: 15px;
+  padding: 10px;
+  padding-right: 20px;
+  padding-left: 20px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .notification-box h3 {
   font-size: 1.2rem;
+  margin-top: 1px;
   margin-bottom: 10px;
   font-family: 'JalnanFont', sans-serif;
 }

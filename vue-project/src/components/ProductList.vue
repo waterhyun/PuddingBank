@@ -53,6 +53,7 @@ defineProps({
   },
 });
 
+
 // 특정 상품에서 save_trm에 따라 금리를 가져오는 메서드
 function getInterestRate(product, term) {
   const option = product.options.find((opt) => opt.save_trm === term);
@@ -118,6 +119,12 @@ tbody tr:hover {
   display: table-row; /* Router-link를 table-row로 설정 */
   text-decoration: none; /* 기본 링크 스타일 제거 */
   color: inherit; /* 텍스트 색상 유지 */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.clickable-row:hover {
+  background-color: #fef0ac;
 }
 
 td {
