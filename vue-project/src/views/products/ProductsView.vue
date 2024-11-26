@@ -130,83 +130,93 @@ onMounted(async () => {
 /* 전체 레이아웃 */
 .products-view {
   display: flex;
-  gap: 20px;
-  padding: 20px;
-  background-color: #fffefb; 
+  gap: 30px;
+  padding: 60px;
+  background-color: #fffefb;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  align-items: flex-start; /* 필터와 콘텐츠의 세로 정렬을 상단으로 설정 */
+  align-items: flex-start;
 }
 
 /* 필터 영역 스타일 */
 .filter-sidebar {
   position: sticky;
   top: 20px;
-  width: 20%;
-  padding: 15px;
-  background-color: #FEF0AC;  /* 푸딩-2 */
+  width: 400px;
+  padding: 25px;
+  background-color: #FEF0AC;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  height: auto;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
 
-/* 검색 조건 텍스트 스타일 */
-.filter-sidebar p {
-  font-family: 'JalnanFont', sans-serif;
-  font-size: 0.95rem;
-  color: #3D0F0E; /* 푸딩-5 */
-  margin-bottom: 15px;
-}
 /* 필터 제목 */
 .filter-sidebar h3 {
   font-family: 'JalnanFont', sans-serif;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  color: #73553C; /* 푸딩-3 */
+  font-size: 1.3rem;
+  color: #73553C;
+  margin: 0 0 5px 0;
+}
+
+/* 검색 조건 텍스트 */
+.filter-sidebar p {
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 0.95rem;
+  color: #3D0F0E;
+  margin: 0;
+}
+
+/* 필터 아이템 컨테이너 */
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* 필터 라벨 */
 .filter-item label {
   font-family: 'JalnanFont', sans-serif;
-  font-size: 0.9rem;
-  color: #3D0F0E; /* 푸딩-5 */
-  margin-bottom: 5px;
+  font-size: 0.95rem;
+  color: #3D0F0E;
+  display: block;
 }
 
 /* 드롭다운 메뉴 */
 .filter-item select {
   font-family: 'JalnanFont', sans-serif;
   width: 100%;
-  padding: 8px;
-  font-size: 0.9rem;
-  border: 1px solid #DBDAD6; /* 푸딩-4 */
+  padding: 10px;
+  font-size: 0.95rem;
+  border: 1px solid #DBDAD6;
   border-radius: 5px;
   background-color: #FFFFFF;
+  cursor: pointer;
 }
 
 /* 초기화 버튼 */
 .filter-sidebar button {
-  padding: 10px;
+  padding: 12px;
   font-family: 'JalnanFont', sans-serif;
   font-size: 1rem;
-  background-color: #3D0F0E; /* 푸딩-5 */
+  background-color: #3D0F0E;
   color: #FFFFFF;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-top: 10px;
 }
 
 .filter-sidebar button:hover {
-  background-color: #73553C; /* 푸딩-3 */
+  background-color: #73553C;
 }
 
 /* 탭 스타일 */
 .tabs-container {
-  width: 70%;
+  flex: 1;
+  padding: 20px;
 }
 
 .tabs {
@@ -249,6 +259,7 @@ onMounted(async () => {
 @media (max-width: 768px) {
   .products-view {
     flex-direction: column;
+    gap: 15px;
   }
 
   .filter-sidebar {
@@ -259,6 +270,5 @@ onMounted(async () => {
     width: 100%;
   }
 }
-
 
 </style>

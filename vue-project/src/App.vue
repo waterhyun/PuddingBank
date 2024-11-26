@@ -3,7 +3,6 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
-import { useArticleStore } from "./stores/article";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -62,6 +61,11 @@ const handleScroll = () => {
   
   isNavVisible.value = currentScrollPosition < lastScrollPosition.value;
   lastScrollPosition.value = currentScrollPosition;
+};
+
+
+const goToRecommendation = () => {
+  router.push({ name: 'LoanMBTITest' })
 };
 
 // Lifecycle hooks
@@ -124,6 +128,11 @@ onBeforeUnmount(() => {
     <div class="content-wrapper">
       <RouterView />
     </div>
+  </div>
+  <div class="floating-recommendation">
+    <button @click="goToRecommendation" class="floating-button">
+      🏦<br>나의 대출<br>찾기
+    </button>
   </div>
   <footer class="footer">
     <p>© 2024 Pudding Bank. All Rights Reserved.</p>
@@ -200,6 +209,7 @@ onBeforeUnmount(() => {
   display: flex;
   gap: 10px;
   align-items: center;
+  margin-right: 30px;
 }
 
 .navbar-center a,
@@ -305,12 +315,48 @@ onBeforeUnmount(() => {
   opacity: 0.9;
 }
 
-@media (max-width: 768px) {
-  .content-wrapper {
-    padding-top: 60px; /* 모바일에서는 더 작은 여백 */
+.floating-recommendation {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+}
+
+.floating-button {
+  animation: float 3s ease-in-out infinite;
+  font-family: 'JalnanFont', sans-serif;
+  background-color: #73553C;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  line-height: 1.3;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 
+.floating-button:hover {
+  transform: translateY(-5px);
+  background-color: #3D0F0E;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 태블릿 크기 */
 @media (max-width: 1028px) {
   .navbar-center a,
   .navbar-right a {
@@ -322,23 +368,48 @@ onBeforeUnmount(() => {
   }
 }
 
+/* 모바일 크기 */
 @media (max-width: 768px) {
-  .hamburger-btn {
-    display: block;
+  /* 네비게이션 바 */
+  .navbar {
+    padding: 15px 20px;
+    position: fixed;
+    height: 60px;
   }
 
+  .navbar-left {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .navbar-left .logo-image {
+    width: 130px;
+  }
+
+  .hamburger-btn {
+    display: block;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* 메뉴 드롭다운 */
   .navbar-center,
   .navbar-right {
     display: none;
     flex-direction: column;
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    top: 60px;
     left: 0;
     width: 100%;
     background-color: #ffffff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px 0;
+    padding: 0;
     text-align: center;
+    z-index: 999;
   }
 
   .navbar-center.open,
@@ -347,6 +418,49 @@ onBeforeUnmount(() => {
     animation: slideDown 0.3s ease-in-out;
   }
 
+  .navbar-center a,
+  .navbar-right a {
+    padding: 15px 0;
+    font-size: 1.1rem;
+    width: 100%;
+    border-bottom: 1px solid rgba(115, 85, 60, 0.1);
+  }
+
+  .navbar-center a:last-child,
+  .navbar-right a:last-child {
+    border-bottom: none;
+  }
+
+  .navbar-center a::after,
+  .navbar-right a::after {
+    display: none;
+  }
+
+  /* 인증 버튼 */
+  .auth-btn {
+    width: 100%;
+    margin: 0;
+    padding: 15px 0;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid rgba(115, 85, 60, 0.1);
+  }
+
+  /* 컨텐츠 영역 */
+  .content-wrapper {
+    padding-top: 60px;
+  }
+
+  /* 플로팅 버튼 */
+  .floating-button {
+    width: 70px;
+    height: 70px;
+    font-size: 0.8rem;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  /* 슬라이드 다운 애니메이션 */
   @keyframes slideDown {
     from {
       opacity: 0;
@@ -356,17 +470,6 @@ onBeforeUnmount(() => {
       opacity: 1;
       transform: translateY(0);
     }
-  }
-
-  .navbar-center a,
-  .navbar-right a {
-    padding: 15px 0;
-    font-size: 1.1rem;
-  }
-
-  .navbar-center a::after,
-  .navbar-right a::after {
-    display: none;
   }
 }
 </style>

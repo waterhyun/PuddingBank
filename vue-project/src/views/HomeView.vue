@@ -139,8 +139,8 @@ const navigateToProducts = () => {
         <section class="services-section">
           <!-- 상단 서비스 박스 -->
           <div class="services-box">
-            <h2 v-if="authStore.isAuthenticated">🍮반갑습니다, {{ user.name }}님!</h2>
-            <h2 v-else>🍮반갑습니다!</h2>
+            <h2 v-if="authStore.isAuthenticated"> 🍮 반갑습니다, {{ user.name }}님!</h2>
+            <h2 v-else>🍮 반갑습니다!</h2>
             <div class="service-icons">
               <div class="icon-card">
                 <img @click='navigateToMyPage' src="/images/banner/mypage.png" alt="">
@@ -149,14 +149,14 @@ const navigateToProducts = () => {
               <div class="service-hello">
                 <p v-if="authStore.isAuthenticated">오늘도 {{ user.name }}님의 목표를 위해 Pudding Bank가 도와드릴게요🍯</p>
                 <p v-else>로그인하고 Pudding Bank의
-              다양한 서비스를 이용해보세요🍯</p>
+              다양한 서비스를 이용해보세요 🍯</p>
               </div>
             </div>
           </div>
 
           <!-- 하단 알림 박스 -->
           <div class="notification-box">
-            <h3>📢알려드립니다</h3>
+            <h3>📢 알려드립니다</h3>
             <div 
               class="notification-content" 
               v-if="latestPost"
