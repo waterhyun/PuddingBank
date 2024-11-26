@@ -125,10 +125,41 @@ onBeforeUnmount(() => {
       <RouterView />
     </div>
   </div>
+  <footer class="footer">
+    <p>© 2024 Pudding Bank. All Rights Reserved.</p>
+  </footer>
 </template>
 
 <style scoped>
 /* Your existing font-face declarations */
+@font-face {
+  font-family: 'jjinbbangB';
+  src: url('@/assets/fonts/AjjinbbangB.TTF') format('truetype');
+  font-display: swap; /* 폰트 로딩 최적화 */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'jjinbbangM'; 
+  src: url('@/assets/fonts/AjjinbbangM.TTF') format('truetype');
+  font-display: swap; /* 폰트 로딩 최적화 */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'JalnanFont'; /* Jalnan2TTF 폰트 */
+  src: url('@/assets/fonts/Jalnan2TTF.ttf') format('truetype');
+  font-display: swap; /* 폰트 로딩 최적화 */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'GowunDodum-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff') format('woff');
+  font-display: swap; /* 폰트 로딩 최적화 */
+  font-weight: normal;
+  font-style: normal;
+}
 
 .navbar {
   display: flex;
@@ -238,11 +269,40 @@ onBeforeUnmount(() => {
 
 .wrapper {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-wrapper {
+  flex: 1;
   padding-top: 120px; /* navbar의 높이 + 여유 공간 */
-  width: 100%;
+}
+
+/* Footer */
+.footer {
+  background: #3d0f0e;
+  color: #fff;
+  padding: 30px 0;
+  text-align: center;
+  position: relative;
+  margin-top: auto;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, #FFE5D9, #FFF0E5);
+}
+
+.footer p {
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.9;
 }
 
 @media (max-width: 768px) {

@@ -148,7 +148,8 @@ const navigateToProducts = () => {
               </div>
               <div class="service-hello">
                 <p v-if="authStore.isAuthenticated">오늘도 {{ user.name }}님의 목표를 위해 Pudding Bank가 도와드릴게요🍯</p>
-                <p v-else>로그인하고 Pudding Bank의 다양한 서비스를 이용해보세요🍯</p>
+                <p v-else>로그인하고 Pudding Bank의
+              다양한 서비스를 이용해보세요🍯</p>
               </div>
             </div>
           </div>
@@ -208,10 +209,6 @@ const navigateToProducts = () => {
         </section> -->
     </div>
   </div>
-
-  <footer class="footer">
-    <p>© 2024 Pudding Bank. All Rights Reserved.</p>
-  </footer>
 </template>
 
 <!-- <script setup>
@@ -360,8 +357,6 @@ const navigateToProducts = () => {
 
 <style scoped>
 /* 공통 스타일 */
-
-
 .main-container {
   max-width: 1200px;
   min-height: 800px;
@@ -505,13 +500,15 @@ const navigateToProducts = () => {
 
 .service-icons {
   display: flex;
-  justify-content: space-around;
-  gap: 10px;
+  align-items: center;
+  gap: 20px;
+  padding: 10px;
 }
 
 .icon-card {
+  flex: 0 0 auto;
   text-align: center;
-  width: 150px;
+  width: 80px;
 }
 
 .icon-card img {
@@ -521,9 +518,17 @@ const navigateToProducts = () => {
 
 .icon-card p {
   margin-top: 5px;
-  font-size: 0.9rem;
+  margin-bottom: 0px;
+  font-size: 0.8rem;
   font-family: 'JalnanFont', sans-serif;
 }
+
+.service-hello {
+  flex: 1;
+  text-align: left;
+  font-family: 'GowunDodum-Regular', sans-serif;
+}
+
 
 /* 알림 박스 */
 .notification-box {
@@ -615,12 +620,6 @@ const navigateToProducts = () => {
   gap: 15px;
 }
 
-.service-hello {
-font-size: 0.9rem;
-  margin: 0;
-  font-family: 'GowunDodum-Regular', sans-serif;
-}
-
 .card {
   padding: 15px;
   background: #ffffff;
@@ -630,7 +629,7 @@ font-size: 0.9rem;
 
 /* Features 섹션 */
 .features {
-  margin-top: 30px;
+  margin-top: 60px;
   margin-bottom: 30px;
   padding: 0 20px;
 }
@@ -736,7 +735,7 @@ font-size: 0.9rem;
 }
 
 
-/* Footer */
+/* Footer
 .footer {
   background: #3d0f0e;
   color: #fff;
@@ -761,7 +760,7 @@ font-size: 0.9rem;
   font-size: 0.9rem;
   margin: 0;
   opacity: 0.9;
-}
+} */
 
 /* CMS 파트너
 .partners {
