@@ -10,7 +10,7 @@
           <p v-if="store.lastUpdateTime">
             마지막 업데이트: {{ formatLastUpdate(store.lastUpdateTime) }}
           </p>
-          <p class="update-notice">* 매일 오전 11시에 환율 정보가 갱신됩니다</p>
+          <p class="update-notice">* 평일 오전 11시에 환율 정보가 갱신됩니다</p>
           <p v-if="store.isLoading" class="loading-text">데이터 업데이트 중...</p>
         </div>
       </div>
@@ -205,7 +205,8 @@ const refreshData = async () => {
     
     if (hours >= 11) {
       await store.updateExchanges()
-      await store.getExchanges()
+      // GET 요청 제거
+      // await store.getExchanges() 
     }
   } catch (error) {
     console.error('환율 데이터 갱신 실패:', error)
@@ -256,7 +257,7 @@ const handleVisibilityChange = () => {
 // 컴포넌트 마운트
 onMounted(async () => {
   try {
-    await store.getExchanges()
+    await store.getExchanges() // 초기 로딩만 수행
     selectedCountry.value = "미국 달러"
     setupAutoUpdate()
     document.addEventListener('visibilitychange', handleVisibilityChange)

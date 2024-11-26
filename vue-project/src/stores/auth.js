@@ -120,6 +120,7 @@ export const useAuthStore = defineStore('auth', {
         throw error
       }
     },
+
     
     async changePassword(passwordData) {
       try {
