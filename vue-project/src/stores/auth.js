@@ -133,6 +133,8 @@ export const useAuthStore = defineStore('auth', {
             'Authorization': `Token ${this.token}`
           }
         })
+        // 비밀번호 변경 성공 후 로그아웃 처리 추가
+        await this.logout()
         return response
       } catch (error) {
         throw error

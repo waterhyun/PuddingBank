@@ -81,7 +81,9 @@ def change_password(request):
             
         user.set_password(new_password1)
         user.save()
-        
+
+        # 토큰 무효화 추가
+        Token.objects.filter(user=user).delete()        
         return Response(
             {'message': '비밀번호가 성공적으로 변경되었습니다.'}, 
             status=status.HTTP_200_OK
