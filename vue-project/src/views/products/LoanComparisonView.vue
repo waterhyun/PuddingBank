@@ -88,15 +88,24 @@ onMounted(async () => {
 <style scoped>
 .loan-comparison {
   display: flex;
-  gap: 20px;
-  padding: 20px;
+  gap: 30px;
+  padding: 30px;
   background-color: #fffefb;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  align-items: flex-start;
 }
 
 .filter-sidebar {
+  position: sticky;
+  top: 20px;
   width: 400px;
+  padding: 20px;
+}
+
+.content-section {
+  flex: 1;
+  padding: 20px;
 }
 
 .sticky-container {
@@ -130,11 +139,6 @@ onMounted(async () => {
   background-color: #FEF0AC;
 }
 
-.content-section {
-  flex: 1;
-  padding: 20px;
-}
-
 .loading,
 .error {
   text-align: center;
@@ -146,6 +150,7 @@ onMounted(async () => {
   color: red;
 }
 
+
 @media (max-width: 768px) {
   .loan-comparison {
     flex-direction: column;
@@ -154,7 +159,6 @@ onMounted(async () => {
 
   .filter-sidebar {
     width: 100%;
-    max-width: none;
   }
 
   .content-section {

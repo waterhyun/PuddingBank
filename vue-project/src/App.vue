@@ -3,7 +3,6 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
-import { useArticleStore } from "./stores/article";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -62,6 +61,11 @@ const handleScroll = () => {
   
   isNavVisible.value = currentScrollPosition < lastScrollPosition.value;
   lastScrollPosition.value = currentScrollPosition;
+};
+
+
+const goToRecommendation = () => {
+  router.push({ name: 'LoanMBTITest' })
 };
 
 // Lifecycle hooks
@@ -125,10 +129,46 @@ onBeforeUnmount(() => {
       <RouterView />
     </div>
   </div>
+  <div class="floating-recommendation">
+    <button @click="goToRecommendation" class="floating-button">
+      🏦<br>나의 대출<br>찾기
+    </button>
+  </div>
+  <footer class="footer">
+    <p>© 2024 Pudding Bank. All Rights Reserved.</p>
+  </footer>
 </template>
 
 <style scoped>
 /* Your existing font-face declarations */
+@font-face {
+  font-family: 'jjinbbangB';
+  src: url('@/assets/fonts/AjjinbbangB.TTF') format('truetype');
+  font-display: swap; /* 폰트 로딩 최적화 */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'jjinbbangM'; 
+  src: url('@/assets/fonts/AjjinbbangM.TTF') format('truetype');
+  font-display: swap; /* 폰트 로딩 최적화 */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'JalnanFont'; /* Jalnan2TTF 폰트 */
+  src: url('@/assets/fonts/Jalnan2TTF.ttf') format('truetype');
+  font-display: swap; /* 폰트 로딩 최적화 */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'GowunDodum-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff') format('woff');
+  font-display: swap; /* 폰트 로딩 최적화 */
+  font-weight: normal;
+  font-style: normal;
+}
 
 .navbar {
   display: flex;
@@ -169,6 +209,7 @@ onBeforeUnmount(() => {
   display: flex;
   gap: 10px;
   align-items: center;
+  margin-right: 30px;
 }
 
 .navbar-center a,
@@ -238,19 +279,84 @@ onBeforeUnmount(() => {
 
 .wrapper {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-wrapper {
+  flex: 1;
   padding-top: 120px; /* navbar의 높이 + 여유 공간 */
-  width: 100%;
 }
 
-@media (max-width: 768px) {
-  .content-wrapper {
-    padding-top: 60px; /* 모바일에서는 더 작은 여백 */
+/* Footer */
+.footer {
+  background: #3d0f0e;
+  color: #fff;
+  padding: 30px 0;
+  text-align: center;
+  position: relative;
+  margin-top: auto;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, #FFE5D9, #FFF0E5);
+}
+
+.footer p {
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.floating-recommendation {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+}
+
+.floating-button {
+  animation: float 3s ease-in-out infinite;
+  font-family: 'JalnanFont', sans-serif;
+  background-color: #73553C;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  line-height: 1.3;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 
+.floating-button:hover {
+  transform: translateY(-5px);
+  background-color: #3D0F0E;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 태블릿 크기 */
 @media (max-width: 1028px) {
   .navbar-center a,
   .navbar-right a {
@@ -262,23 +368,48 @@ onBeforeUnmount(() => {
   }
 }
 
+/* 모바일 크기 */
 @media (max-width: 768px) {
-  .hamburger-btn {
-    display: block;
+  /* 네비게이션 바 */
+  .navbar {
+    padding: 15px 20px;
+    position: fixed;
+    height: 60px;
   }
 
+  .navbar-left {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .navbar-left .logo-image {
+    width: 130px;
+  }
+
+  .hamburger-btn {
+    display: block;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* 메뉴 드롭다운 */
   .navbar-center,
   .navbar-right {
     display: none;
     flex-direction: column;
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    top: 60px;
     left: 0;
     width: 100%;
     background-color: #ffffff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px 0;
+    padding: 0;
     text-align: center;
+    z-index: 999;
   }
 
   .navbar-center.open,
@@ -287,6 +418,49 @@ onBeforeUnmount(() => {
     animation: slideDown 0.3s ease-in-out;
   }
 
+  .navbar-center a,
+  .navbar-right a {
+    padding: 15px 0;
+    font-size: 1.1rem;
+    width: 100%;
+    border-bottom: 1px solid rgba(115, 85, 60, 0.1);
+  }
+
+  .navbar-center a:last-child,
+  .navbar-right a:last-child {
+    border-bottom: none;
+  }
+
+  .navbar-center a::after,
+  .navbar-right a::after {
+    display: none;
+  }
+
+  /* 인증 버튼 */
+  .auth-btn {
+    width: 100%;
+    margin: 0;
+    padding: 15px 0;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid rgba(115, 85, 60, 0.1);
+  }
+
+  /* 컨텐츠 영역 */
+  .content-wrapper {
+    padding-top: 60px;
+  }
+
+  /* 플로팅 버튼 */
+  .floating-button {
+    width: 70px;
+    height: 70px;
+    font-size: 0.8rem;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  /* 슬라이드 다운 애니메이션 */
   @keyframes slideDown {
     from {
       opacity: 0;
@@ -296,17 +470,6 @@ onBeforeUnmount(() => {
       opacity: 1;
       transform: translateY(0);
     }
-  }
-
-  .navbar-center a,
-  .navbar-right a {
-    padding: 15px 0;
-    font-size: 1.1rem;
-  }
-
-  .navbar-center a::after,
-  .navbar-right a::after {
-    display: none;
   }
 }
 </style>

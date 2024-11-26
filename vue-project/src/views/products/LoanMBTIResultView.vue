@@ -66,20 +66,20 @@
           
           <div class="menu-details">
             <div class="rate-info">
-              <h4>디저트 레시피</h4>
-              <p>베이스 금리: {{ product.rate_analysis.min_rate }}%</p>
-              <p>토핑 금리: {{ product.rate_analysis.max_rate }}%</p>
-              <p>평균 당도: {{ product.rate_analysis.avg_rate }}%</p>
-              <p>맛 유형: {{ product.rate_analysis.rate_type }}</p>
+              <h4>디저트 레시피 🧁</h4>
+              <p>🍯 베이스 금리: {{ product.rate_analysis.min_rate }}%</p>
+              <p>🧂 토핑 금리: {{ product.rate_analysis.max_rate }}%</p>
+              <p>🍬 평균 당도: {{ product.rate_analysis.avg_rate.toFixed(2) }}%</p>
+              <p>🍪 맛 유형: {{ product.rate_analysis.rate_type }}</p>
             </div>
 
             <div class="product-details">
-              <p>제공 용량: {{ product.product_info.loan_lmt }}</p>
-              <p>주문 방법: {{ product.product_info.join_way }}</p>
+              <p>🥄 제공 용량: {{ product.product_info.loan_lmt }}</p>
+              <p>📝 주문 방법: {{ product.product_info.join_way }}</p>
             </div>
 
             <div v-if="product.matching_points.length > 0" class="matching-points">
-              <h4>추천 포인트</h4>
+              <h4>추천 포인트 🎁</h4>
               <ul>
                 <li v-for="(point, pointIndex) in product.matching_points" 
                     :key="pointIndex">{{ point }}</li>
@@ -245,46 +245,48 @@ const getOppositeType = (type) => {
 <style scoped>
 /* 기본 레이아웃 */
 .loan-result-container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 50px 30px;
   background-color: #fff1c9;
 }
 
 /* 메인 타이틀 */
 .main-title {
+  font-family: 'JalnanFont', sans-serif;
   text-align: center;
   color: #73553C;
-  font-size: 2.5em;
-  margin-bottom: 40px;
+  font-size: 2.2em;
+  margin-bottom: 50px;
   font-weight: 700;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.08);
 }
 
 /* MBTI 결과 카드 */
 .mbti-dessert-card {
   background: white;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 8px 20px rgba(212, 84, 125, 0.1);
-  margin: 20px 0;
+  border-radius: 25px;
+  padding: 50px;
+  box-shadow: 0 10px 25px rgba(115, 85, 60, 0.1);
+  margin: 30px 0;
   display: grid;
   grid-template-columns: 1.2fr 1fr;
-  gap: 40px;
+  gap: 50px;
 }
 
 /* 왼쪽: 메인 결과 섹션 */
 .main-result {
-  padding-right: 40px;
-  border-right: 2px dashed rgba(212, 84, 125, 0.2);
+  padding-right: 50px;
+  border-right: 2px dashed rgba(115, 85, 60, 0.2);
 }
 
 .mbti-type {
-  font-size: 3em;
-  color: #f5c946;
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 2.8em;
+  color: #73553C;
   text-align: center;
-  margin-bottom: 30px;
-  font-weight: 800;
+  margin-bottom: 35px;
+  font-weight: 700;
 }
 
 .dessert-info {
@@ -307,22 +309,25 @@ const getOppositeType = (type) => {
   object-fit: cover;
   display: block;
 }
+
 .dessert-image-container:hover {
   transform: scale(1.02);
 }
 
 .dessert-name {
-  font-size: 1.8em;
-  color: #f5c946;
-  margin: 20px 0;
+  font-family: 'JalnanFont', sans-serif;
+  font-size: 1.6em;
+  color: #73553C;
+  margin: 25px 0;
   font-weight: 600;
 }
 
 .dessert-description {
-  color: #666;
+  font-family: 'GowunDodum-Regular', sans-serif;
+  color: #3D0F0E;
   line-height: 1.8;
   font-size: 1.1em;
-  padding: 0 20px;
+  padding: 0 25px;
 }
 
 /* 오른쪽: 성향 분석 섹션 */
@@ -333,19 +338,19 @@ const getOppositeType = (type) => {
 }
 
 .analysis-title {
-  color: #f5c946;
-  font-size: 1.6em;
-  margin-bottom: 25px;
+  font-family: 'JalnanFont', sans-serif;
+  color: #73553C;
+  font-size: 1.5em;
+  margin-bottom: 30px;
   text-align: center;
   font-weight: 600;
 }
 
 .mbti-type-explanation {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 25px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: #FEF0AC;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 0px;
 }
 
 .mbti-letter {
@@ -353,7 +358,7 @@ const getOppositeType = (type) => {
   align-items: center;
   gap: 15px;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(115, 85, 60, 0.2);
 }
 
 .mbti-letter:last-child {
@@ -361,79 +366,109 @@ const getOppositeType = (type) => {
 }
 
 .letter {
+  font-family: 'JalnanFont', sans-serif;
   font-weight: 700;
-  color: #f5c946;
-  font-size: 1.4em;
+  color: #73553C;
+  font-size: 1.3em;
   min-width: 35px;
 }
 
 .meaning {
-  color: #666;
+  font-family: 'GowunDodum-Regular', sans-serif;
+  color: #3D0F0E;
   font-size: 1.1em;
+}
+
+/* 성향 분석 섹션의 설명 박스 */
+.criteria-list {
+  background: #FEF0AC;
+  border-radius: 12px;
+  padding: 20px;    /* 기존 패딩 축소 */
+  margin: 15px 0;   /* 마진 추가 */
+}
+
+.criteria-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.criteria-list li {
+  font-family: 'GowunDodum-Regular', sans-serif;  /* 폰트 추가 */
+  color: #3D0F0E;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 8px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.criteria-list li:before {
+  content: "•";
+  color: #73553C;
+  position: absolute;
+  left: 0;
 }
 
 /* 반대 성향 섹션 */
 .opposite-type-section {
-  margin-top: 30px;
-  padding: 25px;
-  background: #fff1c9;
+  padding: 15px;       /* 20px에서 축소 */
+  background: #FEF0AC;
   border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(212, 84, 125, 0.08);
 }
 
 .opposite-type-section h4 {
+  font-family: 'JalnanFont', sans-serif;
   color: #73553C;
-  font-size: 1.4em;
-  font-weight: 600;
+  font-size: 1.1em;    /* 1.2em에서 축소 */
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* 15px에서 축소 */
 }
 
 .opposite-type-card {
   background: white;
-  padding: 20px;
+  padding: 12px;       /* 15px에서 축소 */
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(212, 84, 125, 0.1);
+  box-shadow: 0 4px 8px rgba(115, 85, 60, 0.1);
   transition: transform 0.3s ease;
-}
-
-.opposite-type-card:hover {
-  transform: translateY(-5px);
 }
 
 .opposite-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  gap: 3px;           /* 5px에서 축소 */
 }
 
 .opposite-type {
+  font-family: 'JalnanFont', sans-serif;
   color: #73553C;
-  font-size: 1.8em;
+  font-size: 1.3em;    /* 1.5em에서 축소 */
   font-weight: 700;
-  margin-bottom: 5px;
+  margin-bottom: 0;    /* 2px에서 제거 */
 }
 
 .opposite-dessert {
-  color: #666;
-  font-size: 1.2em;
+  font-family: 'GowunDodum-Regular', sans-serif;
+  color: #3D0F0E;
+  font-size: 1em;      /* 1.1em에서 축소 */
 }
 
 /* 추천 상품 섹션 */
 .recommendations-section {
-  margin-top: 60px;
-  padding: 40px;
+  margin-top: 70px;
+  padding: 50px;
   background: white;
-  border-radius: 20px;
-  box-shadow: rgba(233, 218, 4, 0.15);
+  border-radius: 25px;
+  box-shadow: 0 10px 25px rgba(115, 85, 60, 0.1);
 }
 
 .recommendations-section h2 {
-  color: #f5c946;
+  font-family: 'JalnanFont', sans-serif;
+  color: #73553C;
+  font-size: 2em;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 45px;
 }
 
 .dessert-menu {
@@ -446,7 +481,7 @@ const getOppositeType = (type) => {
   background: #fff;
   border-radius: 15px;
   padding: 25px;
-  box-shadow: 0 4px 15px rgba(233, 218, 4, 0.15);
+  box-shadow: 0 4px 15px rgba(115, 85, 60, 0.1);
   transition: transform 0.3s ease;
 }
 
@@ -460,7 +495,13 @@ const getOppositeType = (type) => {
   gap: 15px;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 2px dashed rgb(250, 234, 14);
+  border-bottom: 2px dashed rgba(115, 85, 60, 0.2);
+}
+
+.menu-header h3 {
+  font-family: 'JalnanFont', sans-serif;
+  color: #73553C;
+  font-size: 1.4em;
 }
 
 .dessert-icon {
@@ -469,17 +510,31 @@ const getOppositeType = (type) => {
 
 .menu-details {
   padding: 20px;
-  background: #f8f9fa;
+  background: #FEF0AC;
   border-radius: 12px;
 }
 
-.rate-info, .product-details, .matching-points {
+.rate-info, 
+.product-details, 
+.matching-points {
   margin-bottom: 20px;
 }
 
-.rate-info h4, .matching-points h4 {
-  color: #f5c946;
-  margin-bottom: 15px;
+.rate-info h4, 
+.matching-points h4 {
+  font-family: 'JalnanFont', sans-serif;
+  color: #73553C;
+  margin-bottom: 20px;
+  font-size: 1.2em;
+}
+
+.rate-info p,
+.product-details p,
+.matching-points li {
+  font-family: 'GowunDodum-Regular', sans-serif;
+  color: #3D0F0E;
+  line-height: 1.6;
+  margin-bottom: 10px;
 }
 
 .matching-points ul {
@@ -489,14 +544,13 @@ const getOppositeType = (type) => {
 
 .matching-points li {
   padding: 8px 0;
-  color: #666;
   position: relative;
   padding-left: 20px;
 }
 
 .matching-points li:before {
   content: "•";
-  color: #f5c946;
+  color: #73553C;
   position: absolute;
   left: 0;
 }
@@ -509,7 +563,7 @@ const getOppositeType = (type) => {
   .main-result {
     padding-right: 0;
     border-right: none;
-    border-bottom: 2px dashed rgba(212, 84, 125, 0.2);
+    border-bottom: 2px dashed rgba(115, 85, 60, 0.2);
     padding-bottom: 40px;
   }
   
