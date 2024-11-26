@@ -1,29 +1,34 @@
 <template>
   <div class="loan-comparison">
-    <div class="header-section">
-      <h2>대출상품 비교</h2>
-      <button class="recommendation-button" @click="goToRecommendation">
-        나에게 맞는 대출 상품 찾기!
-      </button>
-    </div>
-    <div class="filter-section">
-      <loan-filter 
-        @filter-change="handleFilterChange" 
-        :loan-types="['주택담보대출', '전세자금대출']"
-      />
+    <!-- 필터 -->
+    <div class="filter-sidebar">
+      <div class="sticky-container">
+        <loan-filter
+          @filter-change="handleFilterChange"
+          @filter-reset="resetFilters"
+          :loan-types="['주택담보대출', '전세자금대출']"
+        />
+        <button class="recommendation-button" @click="goToRecommendation">
+          나에게 맞는 대출 상품 찾기!
+        </button>
+      </div>
     </div>
 
-    <div v-if="loading" class="loading">데이터를 불러오는 중...</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
-    <div v-else class="comparison-section">
-      <loan-comparison-table 
-        :mortgage-loans="mortgageLoans"
-        :lease-loans="leaseLoans"
-        :filters="filters"
-      />
+    <!-- 콘텐츠 영역 -->
+    <div class="content-section">
+      <div v-if="loading" class="loading">데이터를 불러오는 중...</div>
+      <div v-else-if="error" class="error">{{ error }}</div>
+      <div v-else>
+        <loan-comparison-table
+          :mortgage-loans="mortgageLoans"
+          :lease-loans="mortgageLoans"
+          :filters="filters"
+        />
+      </div>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue'
@@ -57,6 +62,17 @@ const handleFilterChange = (newFilters) => {
   }
 }
 
+// 필터 초기화 핸들러
+const resetFilters = () => {
+  filters.value = {
+    loanType: '',
+    rateType: '',
+    repayType: '',
+    sortField: '',
+    sortOrder: 'asc'
+  }
+}
+
 // 추천 페이지 이동
 const goToRecommendation = () => {
   router.push({ name: 'LoanMBTITest' })
@@ -68,48 +84,82 @@ onMounted(async () => {
   await loanStore.getLeaseLoans();
 });
 </script>
+
 <style scoped>
 .loan-comparison {
-  padding: 20px;
-}
-
-.loading {
-  text-align: center;
-  padding: 20px;
-  color: #666;
-}
-
-.error {
-  color: red;
-  padding: 20px;
-  text-align: center;
-}
-
-.comparison-section {
-  margin-top: 20px;
-}
-
-
-.header-section {
   display: flex;
+  gap: 20px;
+  padding: 20px;
+  background-color: #fffefb;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filter-sidebar {
+  width: 400px;
+}
+
+.sticky-container {
+  position: sticky;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 양쪽 정렬 */
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  gap: 15px;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .recommendation-button {
-  padding: 10px 20px;
-  background-color: #4CAF50;
+  margin-top: 20px; /* 버튼 위의 여백 추가 */
+  padding: 20px 50px; /* 버튼 크기 조정 */
+  background-color: #73553C;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.2s;
+  text-align: center;
+  transition: background-color 0.2s ease;
+  font-family: 'GowunDodum-Regular', sans-serif;
+  font-size: 1rem;
 }
 
 .recommendation-button:hover {
-  background-color: #45a049;
+  background-color: #FEF0AC;
+}
+
+.content-section {
+  flex: 1;
+  padding: 20px;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.1rem;
+}
+
+.error {
+  color: red;
+}
+
+@media (max-width: 768px) {
+  .loan-comparison {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .filter-sidebar {
+    width: 100%;
+    max-width: none;
+  }
+
+  .content-section {
+    width: 100%;
+  }
 }
 
 </style>

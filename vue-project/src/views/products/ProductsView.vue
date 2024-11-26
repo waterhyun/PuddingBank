@@ -3,9 +3,9 @@
     <!-- 필터 영역 -->
     <div class="filter-sidebar">
       <h3>
-       {{ isSavingProduct ? "적금 상품 정보" : "예금 상품 정보" }}
+       {{ isSavingProduct ? "적금 상품 검색" : "예금 상품 검색" }}
       </h3>
-      <p>검색조건을 입력하세요.</p>
+      <!-- <p>검색조건을 입력하세요.</p> -->
       <div class="filter-item">
         <label for="bank">은행명을 선택하세요.</label>
         <select v-model="selectedBank" @change="applyFilters">
@@ -219,7 +219,7 @@ onMounted(async () => {
   padding: 10px 15px;
   font-family: 'JalnanFont', sans-serif;
   font-size: 1rem;
-  color: #3D0F0E; /* 푸딩-5 */
+  color: #73553C; /* 푸딩-5 */
   background-color: transparent;
   border: none;
   border-bottom: 2px solid transparent;

@@ -57,8 +57,8 @@ const toggleMenu = () => {
       </button>
       <div class="navbar-center" :class="{ open: menuOpen }">
         <RouterLink to="/service">서비스 안내</RouterLink>
-        <RouterLink to="/products">예적금비교</RouterLink>
-        <RouterLink to="/loan-comparison">대출상품비교</RouterLink>
+        <RouterLink to="/products">예적금 상품 비교</RouterLink>
+        <RouterLink to="/loan-comparison">대출 상품 비교</RouterLink>
         <RouterLink to="/articles">게시판</RouterLink>
         <a href="#" @click.prevent="handleBankSearch">은행 찾기</a>
         <RouterLink to="/exchanges">환율계산기</RouterLink>
@@ -129,7 +129,7 @@ const toggleMenu = () => {
 
 .navbar-center {
   display: flex;
-  gap: 30px;
+  gap: 50px;
 }
 
 .navbar-right {
@@ -143,7 +143,7 @@ const toggleMenu = () => {
 .navbar-right a,
 .navbar-right RouterLink {
   font-family: "JalnanFont", sans-serif;
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: #3d0f0e; /* 푸딩-5 */
   text-decoration: none;
   transition: color 0.3s ease;

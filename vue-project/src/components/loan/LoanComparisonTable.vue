@@ -1,45 +1,53 @@
 <template>
-  <div class="comparison-table">
-    <table>
-      <thead>
-        <tr>
-          <th>금융사</th>
-          <th>상품명</th>
-          <th>대출종류</th>
-          <th>금리유형</th>
-          <th class="sortable" @click="sortBy('minRate')">
-            최저금리
-            <span class="sort-icon">
-              {{ getSortIcon('minRate') }}
-            </span>
-          </th>
-          <th class="sortable" @click="sortBy('maxRate')">
-            최고금리
-            <span class="sort-icon">
-              {{ getSortIcon('maxRate') }}
-            </span>
-          </th>
-          <th>대출한도</th>
-          <th>상세보기</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="loan in filteredAndSortedLoans" :key="loan.uniqueId">
-          <td>{{ loan.kor_co_nm }}</td>
-          <td>{{ loan.fin_prdt_nm }}</td>
-          <td>{{ loan.loan_type }}</td>
-          <td>{{ getLoanRateType(loan) }}</td>
-          <td>{{ getMinRate(loan) }}%</td>
-          <td>{{ getMaxRate(loan) }}%</td>
-          <td>{{ loan.loan_lmt }}</td>
-          <td>
-            <button @click="showDetail(loan)">상세보기</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="comparison-table-wrapper">
+    <div class="comparison-table ">
+      <h1 class="table-title">대출 상품 비교</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>금융사</th>
+            <th>상품명</th>
+            <th>대출종류</th>
+            <th>금리유형</th>
+            <th>
+              <div class="sortable" @click="sortBy('minRate')">
+                최저금리
+                <span class="sort-icon">{{ getSortIcon('minRate') }}</span>
+              </div>
+            </th>
+            <th>
+              <div class="sortable" @click="sortBy('maxRate')">
+                최고금리
+                <span class="sort-icon">{{ getSortIcon('maxRate') }}</span>
+              </div>
+            </th>
+            <th>대출한도</th>
+            <th>상세보기</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="loan in filteredAndSortedLoans"
+            :key="loan.uniqueId"
+            class="clickable-row"
+          >
+            <td>{{ loan.kor_co_nm }}</td>
+            <td>{{ loan.fin_prdt_nm }}</td>
+            <td>{{ loan.loan_type }}</td>
+            <td>{{ getLoanRateType(loan) }}</td>
+            <td>{{ getMinRate(loan) }}%</td>
+            <td>{{ getMaxRate(loan) }}%</td>
+            <td>{{ loan.loan_lmt }}</td>
+            <td>
+              <button @click="showDetail(loan)">상세보기</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed } from 'vue'
@@ -181,57 +189,132 @@ const showDetail = (loan) => {
 }
 </script>
 
+
 <style scoped>
+/* 테이블 외곽 스타일 */
+.comparison-table-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px; /* 양쪽 패딩 줄임 */
+  background-color: #fef0ac63;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(134, 136, 109, 0.212);
+}
+
+/* 테이블 컨테이너 */
 .comparison-table {
-  width: 100%;
-  overflow-x: auto;
+  width: 100%; /* 부모 요소의 전체 너비를 사용 */
+  /* max-width: 1200px; 최대 너비 제한을 적절히 설정 */
+  overflow-x: auto; /* 화면이 작을 경우 스크롤 가능 */
 }
 
+/* 테이블 스타일 */
 table {
-  width: 100%;
+  width: 100%; /* 테이블이 부모 요소의 너비를 모두 사용 */
   border-collapse: collapse;
-  margin: 1rem 0;
+  background-color: #fff;
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* 테이블 그림자 */
 }
 
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+/* 테이블 제목 */
+.table-title {
+  font-family: "JalnanFont", sans-serif;
+  font-size: 1.5rem;
+  color: #3d0f0e;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-th {
-  background-color: #f5f5f5;
-  font-weight: bold;
+/* 테이블 헤더 스타일 */
+thead th {
+  background-color: #73553c;
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  font-family: "GowunDodum-Regular", sans-serif;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1; /* 테이블 헤더 우선 순위 */
 }
 
-.sortable {
-  cursor: pointer;
-  user-select: none;
+
+/* 테이블 헤더의 둥근 모서리 */
+thead th:first-child {
+  border-top-left-radius: 12px; /* 좌측 상단 둥근 모서리 */
 }
 
-.sortable:hover {
-  background-color: #e9ecef;
+thead th:last-child {
+  border-top-right-radius: 12px; /* 우측 상단 둥근 모서리 */
 }
 
-.sort-icon {
-  margin-left: 4px;
-  font-size: 0.8em;
+/* 테이블 본문 스타일 */
+tbody td {
+  padding: 12px 10px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-family: "GowunDodum-Regular", sans-serif;
+  color: #3D0F0E; /* 텍스트 색상 */
+  border-bottom: 1px solid #dbdad6;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  overflow: hidden; /* 넘치는 텍스트 숨김 */
+  text-overflow: ellipsis; /* 넘치는 텍스트를 "..."로 표시 */
 }
 
-tr:hover {
+/* 테이블 본문의 둥근 모서리 */
+tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px; /* 좌측 하단 둥근 모서리 */
+}
+
+tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px; /* 우측 하단 둥근 모서리 */
+}
+
+/* 마우스 오버 효과 */
+tbody tr:hover {
   background-color: #f9f9f9;
 }
 
+/* 클릭 가능한 행 스타일 */
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.clickable-row:hover {
+  background-color: #fef0ac;
+}
+
+/* 정렬 가능한 헤더 */
+.sortable {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px; /* 텍스트와 아이콘 사이 간격 */
+}
+
+.sortable span.sort-icon {
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+/* 버튼 스타일 */
 button {
   padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: white;
+  background-color: #fef0ac;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
+  font-family: "GowunDodum-Regular", sans-serif;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #e0c06d;
 }
+
 </style>
+
