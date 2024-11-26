@@ -15,14 +15,13 @@ def search_nearby_banks(request):
     latitude = request.GET.get('latitude')
     longitude = request.GET.get('longitude')
     radius = request.GET.get('radius', 1000)
+    keyword = request.GET.get('keyword')
     
     if not all([latitude, longitude]):
         return Response({'error': '위도와 경도가 필요합니다.'}, status=400)
     
-    url = 'https://dapi.kakao.com/v2/local/search/category.json'
     headers = {'Authorization': f'KakaoAK {settings.KAKAO_MAP_API_KEY}'}
     params = {
-        'category_group_code': 'BK9',
         'x': longitude,
         'y': latitude,
         'radius': radius,
@@ -30,11 +29,22 @@ def search_nearby_banks(request):
     }
     
     try:
+        # 키워드가 있으면 키워드 검색 API 사용
+        if keyword:
+            url = 'https://dapi.kakao.com/v2/local/search/keyword.json'
+            params.update({
+                'query': f'{keyword}',
+                'category_group_code': 'BK9'
+            })
+        # 키워드가 없으면 카테고리 검색 API 사용
+        else:
+            url = 'https://dapi.kakao.com/v2/local/search/category.json'
+            params['category_group_code'] = 'BK9'
+        
         response = requests.get(url, headers=headers, params=params)
         response.raise_for_status()
         data = response.json()
         
-        # 각 문서에 대해 개별적으로 serializer 검증
         serialized_data = []
         for document in data['documents']:
             serializer = KakaoLocalSerializer(data=document)
@@ -49,6 +59,45 @@ def search_nearby_banks(request):
         })
     except requests.RequestException as e:
         return Response({'error': f'카카오 API 요청 실패: {str(e)}'}, status=400)
+# @api_view(['GET'])
+# def search_nearby_banks(request):
+#     latitude = request.GET.get('latitude')
+#     longitude = request.GET.get('longitude')
+#     radius = request.GET.get('radius', 1000)
+    
+#     if not all([latitude, longitude]):
+#         return Response({'error': '위도와 경도가 필요합니다.'}, status=400)
+    
+#     url = 'https://dapi.kakao.com/v2/local/search/category.json'
+#     headers = {'Authorization': f'KakaoAK {settings.KAKAO_MAP_API_KEY}'}
+#     params = {
+#         'category_group_code': 'BK9',
+#         'x': longitude,
+#         'y': latitude,
+#         'radius': radius,
+#         'sort': 'distance'
+#     }
+    
+#     try:
+#         response = requests.get(url, headers=headers, params=params)
+#         response.raise_for_status()
+#         data = response.json()
+        
+#         # 각 문서에 대해 개별적으로 serializer 검증
+#         serialized_data = []
+#         for document in data['documents']:
+#             serializer = KakaoLocalSerializer(data=document)
+#             if serializer.is_valid():
+#                 serialized_data.append(serializer.validated_data)
+#             else:
+#                 print(f"Validation error for document: {serializer.errors}")
+                
+#         return Response({
+#             'banks': serialized_data,
+#             'meta': data['meta']
+#         })
+#     except requests.RequestException as e:
+#         return Response({'error': f'카카오 API 요청 실패: {str(e)}'}, status=400)
     
 @api_view(['GET'])
 def get_bank_detail(request, bank_id):

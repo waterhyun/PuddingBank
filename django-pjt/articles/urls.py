@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+app_name = 'articles'
 
 urlpatterns = [
     # 전체 게시글 및 게시글 추가
@@ -13,4 +14,6 @@ urlpatterns = [
     path('comments/<int:comment_id>/', views.comment_detail, name='comment_detail'),
     # 게시글 좋아요 토글
     path('<int:article_id>/like/', views.article_like, name='article_like'),
+    # 내가 쓴 댓글
+    path('my_comments/<int:user_id>/', views.my_comments, name='my_comments'),
 ]

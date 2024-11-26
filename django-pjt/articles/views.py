@@ -130,3 +130,10 @@ def article_like(request, article_id):
         'liked': liked,
         'like_count': article.like_users.count()
     })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_comments(request, user_id):
+    comments = Comment.objects.filter(user_id=user_id)
+    serializer = CommentSerializer(comments, many=True)
+    return Response(serializer.data)

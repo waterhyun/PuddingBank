@@ -1,65 +1,3 @@
-<template>
-  <div>
-    <h1>게시글 목록 페이지</h1>
-
-    <!-- 게시글 작성 버튼 및 내가 쓴 글 보기 버튼 -->
-    <div class="create-button-container">
-      <div>
-        <router-link v-if="authStore.isAuthenticated" :to="{ name: 'ArticleCreate' }" class="create-button">
-          게시글 작성
-        </router-link>
-        <button v-else @click="redirectToLogin" class="create-button">
-          게시글 작성
-        </button>
-      </div>
-      <div>
-        <button @click="toggleMyArticles" class="my-articles-button">
-          {{ showMyArticles ? "전체 글 보기" : "내가 쓴 글 보기" }}
-        </button>
-      </div>
-    </div>
-
-    <!-- 검색창 -->
-    <div class="search-container">
-      <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="작성자, 제목, 내용"
-        class="search-input"
-      />
-      <button @click="filterArticlesBySearch" class="search-button">검색</button>
-    </div>
-
-    <hr />
-
-    <!-- 카테고리 탭 -->
-    <div class="category-tabs">
-      <div
-        v-for="category in categories"
-        :key="category"
-        @click="selectCategory(category)"
-        :class="{ active: currentCategory === category }"
-        class="category-tab"
-      >
-        {{ category }}
-        <span class="count">({{ getArticleCount(category) }})</span>
-      </div>
-    </div>
-
-    <hr />
-
-    <!-- 부합한 글이 없는 경우 -->
-    <div v-if="filteredArticles.length === 0" class="no-articles">
-      '{{searchQuery}}'에 대한 검색어가 없습니다.
-    </div>
-
-    <!-- 게시글 목록 -->
-    <div v-else>
-      <ArticleList :articles="filteredArticles" />
-    </div>
-  </div>
-</template>
-
 <script setup>
 import ArticleList from '@/components/ArticleList.vue'
 import { ref, onMounted, computed } from 'vue'
@@ -138,109 +76,273 @@ const redirectToLogin = () => {
 }
 </script>
 
+
+<template>
+  <div class="community-container">
+    <h1 class="community-title">커뮤니티</h1>
+
+    <!-- 상단 버튼 영역 -->
+    <div class="action-container">
+      <div class="button-group">
+        <router-link 
+          v-if="authStore.isAuthenticated" 
+          :to="{ name: 'ArticleCreate' }" 
+          class="btn create-btn"
+        >
+          글쓰기
+        </router-link>
+        <button 
+          v-else 
+          @click="redirectToLogin" 
+          class="btn create-btn"
+        >
+          글쓰기
+        </button>
+        <button 
+          @click="toggleMyArticles" 
+          class="btn toggle-btn"
+        >
+          {{ showMyArticles ? "전체 글 보기" : "내가 쓴 글 보기" }}
+        </button>
+      </div>
+
+      <!-- 검색 영역 -->
+      <div class="search-container">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="검색어를 입력하세요"
+          class="search-input"
+        />
+        <button @click="filterArticlesBySearch" class="btn search-btn">
+          검색
+        </button>
+      </div>
+    </div>
+
+    <!-- 카테고리 탭 -->
+    <div class="category-tabs">
+      <button
+        v-for="category in categories"
+        :key="category"
+        @click="selectCategory(category)"
+        :class="['category-tab', { active: currentCategory === category }]"
+      >
+        {{ category }}
+        <span class="count">({{ getArticleCount(category) }})</span>
+      </button>
+    </div>
+
+    <!-- 검색 결과 없음 -->
+    <div v-if="filteredArticles.length === 0" class="empty-result">
+      '{{ searchQuery }}'에 대한 검색 결과가 없습니다.
+    </div>
+
+    <!-- 게시글 목록 -->
+    <div v-else class="article-container">
+      <ArticleList :articles="filteredArticles" />
+    </div>
+  </div>
+</template>
+
 <style scoped>
-/* 게시글 작성 버튼 컨테이너 */
-.create-button-container {
+.community-container {
+  max-width: 1400px;
+  margin: 24px auto;
+  padding: 32px;
+  background-color: #fffefb;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(115, 85, 60, 0.12);
+}
+
+.community-title {
+  font-family: 'JalnanFont';
+  color: #73553C;
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 32px;
+  line-height: 1.4;
+}
+
+/* 상단 버튼 영역 */
+.action-container {
   display: flex;
-  justify-content: flex-end; /* 오른쪽 정렬 */
-  align-items: center; /* 높이 정렬 */
-  gap: 10px; /* 버튼 간 간격 */
-  margin-bottom: 20px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
 }
 
-/* 게시글 작성 버튼 스타일 */
-.create-button,
-.my-articles-button {
-  display: inline-flex; /* 버튼 내부 콘텐츠 정렬 */
-  align-items: center; /* 텍스트 세로 정렬 */
-  justify-content: center; /* 텍스트 가로 정렬 */
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
-  background-color: #007bff;
+.button-group {
+  display: flex;
+  gap: 1rem;
+}
+
+/* 버튼 스타일 */
+.btn {
+  padding: 0.8rem 1.5rem;
   border: none;
-  border-radius: 4px;
-  text-decoration: none;
+  border-radius: 8px;
+  font-family: 'jjinbbangM';
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.2s ease;
 }
 
-.create-button:hover,
-.my-articles-button:hover {
-  background-color: #0056b3;
+.create-btn {
+  background: #FDE49B;
+  color: #73553C;
+  text-decoration: none;
 }
 
-.create-button:active,
-.my-articles-button:active {
-  background-color: #004494;
+.toggle-btn {
+  background: #73553C;
+  color: #FFFEFB;
 }
-/* 검색창 스타일 */
+
+.search-btn {
+  background: #FEF0AC;
+  color: #73553C;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(115, 85, 60, 0.2);
+}
+
+/* 검색 영역 */
 .search-container {
   display: flex;
-  align-items: center;
-  margin-bottom: 20px;
+  gap: 0.5rem;
 }
 
 .search-input {
-  flex: 1;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px 0 0 4px;
+  padding: 0.8rem 1rem;
+  border: 2px solid #FDE49B;
+  border-radius: 8px;
+  font-family: 'GowunDodum-Regular';
+  width: 300px;
 }
 
-.search-button {
-  padding: 10px 20px;
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 0 4px 4px 0;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-}
-
-.search-button:hover {
-  background-color: #5a6268;
+.search-input:focus {
+  outline: none;
+  border-color: #73553C;
 }
 
 /* 카테고리 탭 */
 .category-tabs {
   display: flex;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 20px;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem 0;
+  border-top: 1px solid #FDE49B;
+  border-bottom: 1px solid #FDE49B;
 }
 
 .category-tab {
-  padding: 10px 20px;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  background: none;
+  font-family: 'jjinbbangM';
+  color: #73553C;
   cursor: pointer;
-  font-weight: bold;
-  color: #6c757d; /* 기본 회색 */
-  border-bottom: 2px solid transparent; /* 기본 밑줄 숨김 */
-  transition: color 0.2s ease, border-bottom 0.2s ease;
+  transition: all 0.2s ease;
+  opacity: 0.6;
 }
 
 .category-tab:hover {
-  color: #007bff; /* 호버 시 파란색 */
+  opacity: 1;
 }
 
 .category-tab.active {
-  color: #007bff; /* 활성화된 탭 파란색 */
-  border-bottom: 2px solid #007bff; /* 활성화된 밑줄 */
+  opacity: 1;
+  background: #FEF0AC;
+  border-radius: 20px;
 }
 
 .count {
-  font-weight: normal;
-  color: #6c757d;
-  margin-left: 5px;
+  font-size: 0.9rem;
+  margin-left: 0.3rem;
 }
 
-/* 부합한 글 없음 스타일 */
-.no-articles {
+/* 검색 결과 없음 */
+.empty-result {
   text-align: center;
-  color: #6c757d;
-  font-size: 16px;
-  margin-top: 20px;
+  padding: 3rem;
+  font-family: 'jjinbbangM';
+  color: #73553C;
+  background: #FEF0AC;
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin: 32px auto 0;
+  padding: 32px;
+  background: #FFFEFB;
+  border-radius: 16px;
+  border: 3px solid #FDE49B;
+  min-height: 500px;
+}
+
+
+/* 반응형 */
+@media (max-width: 1440px) {
+  .community-container {
+    margin: 16px;
+    padding: 24px;
+  }
+  
+  .content-wrapper {
+    padding: 24px;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .community-container {
+    margin: 16px;
+    padding: 24px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .community-container {
+    margin: 8px;
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .content-wrapper {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .action-container {
+    flex-direction: column;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .category-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 </style>

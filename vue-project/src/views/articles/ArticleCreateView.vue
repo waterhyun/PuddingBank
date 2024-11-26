@@ -1,41 +1,3 @@
-<template>
-  <div class="create-article-page">
-    <h1 class="title">게시글 생성</h1>
-    <form @submit.prevent="create" class="form-container">
-      
-      <!-- 카테고리 선택 -->
-      <div class="form-group">
-        <label for="category">카테고리 :</label>
-        <select id="category" v-model="category" class="form-select">
-          <option disabled value="">카테고리를 선택하세요</option>
-          <option value="NOTICE">공지</option>
-          <option value="FREE">자유</option>
-          <option value="QUESTION">질문</option>
-          <option value="RECOMMEND">추천</option>
-        </select>
-      </div>
-      
-      <!-- 제목 입력 -->
-      <div class="form-group">
-        <label for="title">제목 :</label>
-        <input type="text" id="title" v-model.trim="title" class="form-input">
-      </div>
-
-      <!-- 내용 입력 -->
-      <div class="form-group">
-        <label for="content">내용 :</label>
-        <textarea id="content" v-model.trim="content" class="form-textarea"></textarea>
-      </div>
-
-       <!-- 버튼 컨테이너 -->
-       <div class="button-container">
-        <input type="submit" value="게시글 생성" class="submit-button">
-        <RouterLink to="/articles/" class="back-button">목록으로 돌아가기</RouterLink>
-      </div>
-    </form>
-  </div>
-</template>
-
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -75,125 +37,178 @@ const create = async function() {
 }
 </script>
 
+<template>
+  <div class="create-article-page">
+    <h1 class="page-title">게시글 작성</h1>
+    <form @submit.prevent="create" class="form-container">
+      
+      <!-- 카테고리 선택 -->
+      <div class="form-group">
+        <label for="category">카테고리</label>
+        <select id="category" v-model="category" class="form-select">
+          <option disabled value="">카테고리를 선택하세요</option>
+          <option value="NOTICE">공지</option>
+          <option value="FREE">자유</option>
+          <option value="QUESTION">질문</option>
+          <option value="RECOMMEND">추천</option>
+        </select>
+      </div>
+      
+      <!-- 제목 입력 -->
+      <div class="form-group">
+        <label for="title">제목</label>
+        <input 
+          type="text" 
+          id="title" 
+          v-model.trim="title" 
+          class="form-input"
+          placeholder="제목을 입력하세요"
+        >
+      </div>
+
+      <!-- 내용 입력 -->
+      <div class="form-group">
+        <label for="content">내용</label>
+        <textarea 
+          id="content" 
+          v-model.trim="content" 
+          class="form-textarea"
+          placeholder="내용을 입력하세요"
+          rows="10"
+        ></textarea>
+      </div>
+
+      <!-- 버튼 영역 -->
+      <div class="button-group">
+        <RouterLink to="/articles/" class="btn cancel-btn">취소</RouterLink>
+        <button type="submit" class="btn submit-btn">작성완료</button>
+      </div>
+    </form>
+  </div>
+</template>
+
 <style scoped>
-
-/* 페이지 전체 컨테이너 */
 .create-article-page {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px; /* 내부 여백 추가 */
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #FFFEFB;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* 제목 스타일 */
-.title {
+.page-title {
+  font-family: 'JalnanFont';
+  color: #73553C;
   text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
+  font-size: 2rem;
 }
 
-/* 폼 컨테이너 */
 .form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* 필드 간격 */
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border: 1px solid #FDE49B;
+  border-radius: 12px;
 }
 
-/* 각 입력 필드 그룹 */
 .form-group {
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 1.5rem;
 }
 
-/* 레이블 스타일 */
-label {
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
+.form-group label {
+  display: block;
+  font-family: 'jjinbbangM';
+  color: #73553C;
+  margin-bottom: 0.5rem;
 }
 
-/* 공통 입력 필드 스타일 */
+.form-select,
 .form-input,
-.form-textarea,
-.form-select {
-  width: calc(100% - 20px); /* 양쪽 여백 */
-  margin: 0 auto; /* 가운데 정렬 */
-  padding: 10px;
-  font-size: 14px;
-  color: #555;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: white;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-/* 포커스 시 효과 */
-.form-input:focus,
-.form-textarea:focus,
-.form-select:focus {
-  border-color: #007bff;
-}
-
-/* 텍스트 영역 */
 .form-textarea {
-  resize: none;
-  height: 100px;
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid #FDE49B;
+  border-radius: 8px;
+  font-family: 'GowunDodum-Regular';
+  color: #3D0F0E;
+  background: #FFFEFB;
+  transition: all 0.2s ease;
 }
 
-/* 버튼 컨테이너 */
-.button-container {
-  display: flex; /* 버튼 나란히 배치 */
-  justify-content: space-between; /* 양옆 정렬 */
-  gap: 10px; /* 버튼 간격 */
-  margin-top: 20px;
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2373553C' d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.762L10.825 4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
 }
 
-/* 공통 버튼 스타일 */
-button,
-.submit-button,
-.back-button {
-  flex: 1; /* 버튼 크기 균등 */
-  padding: 12px;
-  font-size: 16px;
-  color: white;
-  text-align: center;
-  text-decoration: none;
+.form-textarea {
+  resize: vertical;
+  min-height: 200px;
+}
+
+.form-select:focus,
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #73553C;
+  box-shadow: 0 0 0 3px rgba(115, 85, 60, 0.1);
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.8rem 2rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-family: 'jjinbbangM';
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 게시글 생성 버튼 스타일 */
-.submit-button {
-  background-color: #007bff;
+.submit-btn {
+  background: #FDE49B;
+  color: #73553C;
 }
 
-.submit-button:hover {
-  background-color: #0056b3;
+.cancel-btn {
+  background: #73553C;
+  color: #FFFEFB;
 }
 
-.submit-button:active {
-  background-color: #004494;
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(115, 85, 60, 0.2);
 }
 
-/* 뒤로가기 버튼 스타일 */
-.back-button {
-  background-color: #6c757d;
-}
+@media (max-width: 768px) {
+  .create-article-page {
+    margin: 1rem;
+    padding: 1rem;
+  }
 
-.back-button:hover {
-  background-color: #5a6268;
-}
+  .form-container {
+    padding: 1rem;
+  }
 
-.back-button:active {
-  background-color: #4e555b;
+  .button-group {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 </style>
