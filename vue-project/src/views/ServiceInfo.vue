@@ -80,7 +80,7 @@
   align-items: center;
   background-color: #FEF0AC;
   gap: 1; /* 간격 살짝 늘림 */
-  max-width: 1400px; /* 최대 너비 설정 */
+  /* max-width: 1400px; 최대 너비 설정 */
   margin: 0 auto; /* 중앙 정렬 */
 }
 
