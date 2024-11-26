@@ -2,13 +2,12 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-// API URL 설정
-const API_URL = 'http://127.0.0.1:8000/api/v1'  // v1 추가
+const API_URL = 'http://127.0.0.1:8000/api/v1'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('token') || null,
-    user: JSON.parse(localStorage.getItem('user')) || null,
+    token: sessionStorage.getItem('token') || null,
+    user: JSON.parse(sessionStorage.getItem('user')) || null,
     isLoading: false,
     error: null
   }),
@@ -32,7 +31,7 @@ export const useAuthStore = defineStore('auth', {
         })
 
         this.token = response.data.key
-        localStorage.setItem('token', response.data.key)
+        sessionStorage.setItem('token', response.data.key)
         axios.defaults.headers.common['Authorization'] = `Token ${response.data.key}`
         
         await this.fetchUserDetails()
@@ -85,14 +84,13 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.token = null
         this.user = null
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
+        sessionStorage.removeItem('token')
+        sessionStorage.removeItem('user')
         delete axios.defaults.headers.common['Authorization']
         this.isLoading = false
       }
     },
 
-    // 로그인한 사용자의 상세 정보를 가져오는 함수
     async fetchUserDetails() {
       try {
         const response = await axios.get(`${API_URL}/accounts/user/`, {
@@ -101,7 +99,7 @@ export const useAuthStore = defineStore('auth', {
           }
         })
         this.user = response.data
-        localStorage.setItem('user', JSON.stringify(response.data))
+        sessionStorage.setItem('user', JSON.stringify(response.data))
         return response.data
       } catch (error) {
         throw error
@@ -116,13 +114,13 @@ export const useAuthStore = defineStore('auth', {
           }
         })
         this.user = response.data
-        localStorage.setItem('user', JSON.stringify(response.data))
+        sessionStorage.setItem('user', JSON.stringify(response.data))
         return response.data
       } catch (error) {
         throw error
       }
     },
-
+    
     async changePassword(passwordData) {
       try {
         const response = await axios.post(`${API_URL}/accounts/password/change/`, {

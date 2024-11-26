@@ -10,7 +10,7 @@ const router = useRouter()
 
 const create = async function() {
   try {
-    const token = localStorage.getItem('token')
+    const token = sessionStorage.getItem('token')
     await axios({
       method: 'post',
       url: 'http://127.0.0.1:8000/api/v1/articles/',

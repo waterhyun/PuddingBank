@@ -1,3 +1,118 @@
+<script setup>
+import { ref, onMounted, onUnmounted } from "vue"
+import { useRouter } from "vue-router"
+import { useAuthStore } from '@/stores/auth'
+import { useArticleStore } from "@/stores/article"
+import { storeToRefs } from 'pinia'
+
+const router = useRouter()
+const authStore = useAuthStore()
+const articleStore = useArticleStore()
+const { user } = storeToRefs(authStore)
+const latestPost = ref(null)
+
+const slides = ref([
+  {
+    image: "/images/banner/banner1.png",
+    title: "Millefeuille Special Event",
+    description: "특정 은행 가입 시 제공되는 특별한 혜택 1",
+    alt: "Millefeuille Slide",
+    link: '/loan-comparison',
+  },
+  {
+    image: "/images/banner/banner2.png",
+    title: "CMS 신규가입 이벤트 안내",
+    description: "특정 은행 가입 시 제공되는 특별한 혜택 2",
+    alt: "Slide 2",
+    link: '/loan-test',
+  },
+  {
+    image: "/images/banner/banner3.png",
+    title: "CMS 신규가입 혜택",
+    description: "특정 은행 가입 시 제공되는 특별한 혜택 3",
+    alt: "Slide 3",
+    link: '/products',
+  },
+])
+
+const currentIndex = ref(0)
+let intervalId
+
+const nextSlide = () => {
+  currentIndex.value = (currentIndex.value + 1) % slides.value.length
+}
+
+const prevSlide = () => {
+  currentIndex.value = (currentIndex.value - 1 + slides.value.length) % slides.value.length
+}
+
+const fetchArticles = async () => {
+  try {
+    const announcements = await articleStore.getAnnouncements()
+    console.log(announcements)
+    if (announcements && announcements.length > 0) {
+      // 공지사항 중 가장 최근 글을 latestPost에 저장
+      const noticeAnnouncements = announcements.filter(
+        post => post.category_display === "공지"
+      )
+      if (noticeAnnouncements.length > 0) {
+        latestPost.value = noticeAnnouncements[0]
+      }
+    }
+  } catch (error) {
+    console.error("공지사항을 불러오는 중 오류가 발생했습니다:", error)
+  }
+}
+
+onMounted(async () => {
+  // 캐러셀 인터벌 설정
+  intervalId = setInterval(() => {
+    nextSlide()
+  }, 3000)
+  
+  // 공지사항 즉시 로드
+  await fetchArticles()
+})
+
+// 컴포넌트가 언마운트될 때 인터벌 정리
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
+})
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+}
+
+const navigateToPage = (link) => {
+  if (link) {
+    router.push(link)
+  }
+}
+
+const navigateToMyPage = () => {
+  if (!authStore.isAuthenticated) {
+    router.push("/login")
+    return
+  }
+  router.push("/profile")
+}
+
+const navigateToLoan = () => {
+  router.push("/loan-comparison")
+}
+
+const navigateToLoantest = () => {
+  router.push("/loan-test")
+}
+
+const navigateToProducts = () => {
+  router.push("/products")
+}
+</script>
+
 <template>
   <div>
     <div class="main-container">
@@ -6,21 +121,9 @@
         <!-- 이벤트 배너 -->
         <section class="banner">
           <div class="carousel">
-            <div
-              class="carousel-wrapper"
-              :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
-            >
-              <div
-                v-for="(slide, index) in slides"
-                :key="index"
-                class="carousel-slide"
-                :class="{ active: index === currentIndex }"
-                @click="navigateToPage(slide.link)"
-              >
+            <div class="carousel-wrapper" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
+              <div v-for="(slide, index) in slides" :key="index" class="carousel-slide" :class="{ active: index === currentIndex }" @click="navigateToPage(slide.link)">
                 <img :src="slide.image" :alt="slide.alt" class="carousel-image" />
-                <!-- <div class="slide-content">
-                  <button class="btn">자세히 보기</button>
-                </div> -->
               </div>
             </div>
             <button class="prev-btn" @click="prevSlide">&#10094;</button>
@@ -30,17 +133,18 @@
 
         <!-- 주요 서비스 -->
         <section class="services-section">
-
           <!-- 상단 서비스 박스 -->
           <div class="services-box">
-            <h2>🍮반갑습니다, {{ user.name }}님!</h2>
+            <h2 v-if="authStore.isAuthenticated">🍮반갑습니다, {{ user.name }}님!</h2>
+            <h2 v-else>🍮반갑습니다!</h2>
             <div class="service-icons">
               <div class="icon-card">
                 <img @click='navigateToMyPage' src="/images/banner/mypage.png" alt="">
                 <p>마이페이지</p>
               </div>
               <div class="service-hello">
-                <p>오늘도 {{ user.name }}님의 목표를 위해 Pudding Bank가 도와드릴게요🍯</p>
+                <p v-if="authStore.isAuthenticated">오늘도 {{ user.name }}님의 목표를 위해 Pudding Bank가 도와드릴게요🍯</p>
+                <p v-else>로그인하고 Pudding Bank의 다양한 서비스를 이용해보세요🍯</p>
               </div>
             </div>
           </div>
@@ -82,26 +186,26 @@
         </div>
       </section>
 
-      <!-- CMS 파트너 -->
-      <!-- <section class="partners">
-        <h2>나만의 CMS 파트너</h2>
-        <div class="partner-grid">
-          <div class="partner-item">세무/회계</div>
-          <div class="partner-item">후원</div>
-          <div class="partner-item">임대</div>
-          <div class="partner-item">비영리</div>
-          <div class="partner-item">IT 서비스</div>
-        </div>
-      </section> -->
+        <!-- CMS 파트너 -->
+        <!-- <section class="partners">
+          <h2>나만의 CMS 파트너</h2>
+          <div class="partner-grid">
+            <div class="partner-item">세무/회계</div>
+            <div class="partner-item">후원</div>
+            <div class="partner-item">임대</div>
+            <div class="partner-item">비영리</div>
+            <div class="partner-item">IT 서비스</div>
+          </div>
+        </section> -->
     </div>
   </div>
-  
+
   <footer class="footer">
     <p>© 2024 Pudding Bank. All Rights Reserved.</p>
   </footer>
 </template>
 
-<script setup>
+<!-- <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from '@/stores/auth'
@@ -218,10 +322,13 @@ const navigateToPage = (link) => {
 };
 
 // 클릭 이벤트로 "/loan-comparison"으로 이동
-const navigateToMyPage= () => {
+const navigateToMyPage = () => {
+  if (!authStore.isAuthenticated) {
+    router.push("/login");
+    return;
+  }
   router.push("/profile");
 };
-
 
 // 클릭 이벤트로 "/loan-comparison"으로 이동
 const navigateToLoan = () => {
@@ -240,7 +347,7 @@ const navigateToProducts = () => {
 };
 
 
-</script>
+</script> -->
 
 <style scoped>
 /* 공통 스타일 */
@@ -253,22 +360,20 @@ const navigateToProducts = () => {
   background-color: #fffefb;
 }
 
-/* 상단 섹션: 배너와 서비스 */
 .top-section {
   display: flex;
   gap: 10px;
-  align-items: flex-start;
-  align-items: center; /* 가로 방향 중앙 정렬 */
+  align-items: center;
 }
 
-/* 이벤트 배너 */
 .banner {
   flex: 2;
   border-radius: 10px;
   overflow: hidden;
   max-height: 400px;
-  position: relative; /* 텍스트와 이미지 레이어 구분을 위한 설정 */
+  position: relative;
 }
+
 
 .carousel {
   position: relative;

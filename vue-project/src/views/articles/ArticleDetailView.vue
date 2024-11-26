@@ -35,7 +35,7 @@ const startEditArticle = () => {
 const handleUpdateArticle = async () => {
   if (editTitle.value.trim() === '' || editContent.value.trim() === '') return
   
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   try {
     await axios({
       method: 'put',
@@ -71,7 +71,7 @@ const handleDeleteArticle = async () => {
 
   if (!confirm('정말 삭제하시겠습니까?')) return
   
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   try {
     await axios({
       method: 'delete',
@@ -102,7 +102,7 @@ const cancelEditArticle = () => {
 const handleSubmitComment = async () => {
   if (!commentContent.value.trim()) return
   
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   if (!token) {
     alert('로그인이 필요합니다.')
     router.push({ name: 'Login' })
@@ -171,7 +171,7 @@ const cancelEdit = () => {
 const handleUpdateComment = async (commentId) => {
   if (!editContent.value.trim()) return
   
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   try {
     await axios({
       method: 'put',
@@ -199,7 +199,7 @@ const handleUpdateComment = async (commentId) => {
 const handleDeleteComment = async (commentId) => {
   if (!confirm('댓글을 삭제하시겠습니까?')) return
   
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   try {
     await axios({
       method: 'delete',
@@ -225,7 +225,7 @@ const handleLike = async () => {
     return
   }
 
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   try {
     await axios({
       method: 'post',

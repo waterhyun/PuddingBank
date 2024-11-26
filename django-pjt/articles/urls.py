@@ -5,7 +5,7 @@ app_name = 'articles'
 
 urlpatterns = [
     # 전체 게시글 및 게시글 추가
-    path('', views.article_list_create), 
+    path('', views.article_list_create),
     # 게시글 상세 및 댓글 포함(조회, 수정, 삭제)
     path('<int:article_id>/', views.article_detail, name='article_detail'),
     # 댓글 추가

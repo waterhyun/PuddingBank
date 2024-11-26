@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, UserUpdateSerializer
 from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token
+from django.http import JsonResponse
+
 
 User = get_user_model()
 
@@ -88,3 +91,10 @@ def change_password(request):
             {'error': '비밀번호 변경 중 오류가 발생했습니다.'}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+def login_view(request):
+    # 로그인 로직 처리 후
+    token = Token.objects.get(user=user)
+    # 세션에 토큰 저장
+    request.session['auth_token'] = token.key
+    return JsonResponse({'token': token.key})

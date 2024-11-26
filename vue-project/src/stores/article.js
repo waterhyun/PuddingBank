@@ -15,25 +15,51 @@ export const useArticleStore = defineStore('article', () => {
 
   // 전체 게시글 조회
   const getArticles = function () {
+    const headers = authStore.token 
+      ? { Authorization: `Token ${authStore.token}` }
+      : {}
+      
     axios({
       method: 'get',
       url: 'http://127.0.0.1:8000/api/v1/articles/',
-      headers: {
-        Authorization: `Token ${authStore.token}`
-      }
+      headers
     })
     .then(res => {
       articles.value = res.data
-      // 현재 로그인한 사용자의 글만 필터링
-      myArticles.value = res.data.filter(
-        article => article.username === authStore.user?.username
-      )
+      if (authStore.isAuthenticated) {
+        myArticles.value = res.data.filter(
+          article => article.username === authStore.user?.username
+        )
+      }
     })
     .catch(error => {
       console.error('Error fetching articles:', error)
     })
   }
 
+  // 공지사항만 조회
+  const getAnnouncements = function () {
+    const headers = authStore.token 
+      ? { Authorization: `Token ${authStore.token}` }
+      : {}
+      
+    return axios({
+      method: 'get',
+      url: 'http://127.0.0.1:8000/api/v1/articles/',
+      headers
+    })
+    .then(res => {
+      const announcements = res.data.filter(
+        article => article.category_display === "공지"
+      )
+      return announcements
+    })
+    .catch(error => {
+      console.error('Error fetching announcements:', error)
+      return []
+    })
+  }
+  
   // 단일 게시글 + 댓글 조회
   const getArticle = function(article_id) {
     axios({
@@ -77,6 +103,7 @@ export const useArticleStore = defineStore('article', () => {
     myComments,
     getArticles, 
     getArticle,
-    getMyComments
+    getMyComments,
+    getAnnouncements
   }
 })
